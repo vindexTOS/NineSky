@@ -3,15 +3,15 @@ import {   Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/navbar/NonAuthNavBar';
 import LayOut from './LayOut';
 import EnteryPage from './pages/Entery/EnteryPage';
+import UserMain from './pages/UserDashboard/UserMain';
 
  
-const About = () => <h1>About Page</h1>;
-const NotFound = () => <h1>404 - Not Found</h1>;
+ const NotFound = () => <h1>404 - Not Found</h1>;
 
 // Define the routes array
 const routes = [
   { path: '/', element: <EnteryPage /> },
-  { path: '/about', element: <About /> },
+  { path: '/user', element: <UserMain /> },
   { path: '*', element: <NotFound /> }  // Catch-all for undefined routes
 ];
 
