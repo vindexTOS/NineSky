@@ -8,11 +8,13 @@ export default function AuthNavBar() {
     <div>
       <h1 className="text-white text-2xl font-bold  md:flex hidden">Nine Sky</h1>
     </div>
+     
     <div className="flex items-center space-x-4">
       <Avatar size="large" icon={<UserOutlined />} />
       <div className="flex flex-col">
         <h1 className="text-white text-lg font-semibold">Giorgi</h1>
         <h1 className="text-gray-400 text-sm">ID: 1999125</h1>
+
       </div>
       <Button
         type="primary"

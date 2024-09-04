@@ -15,7 +15,7 @@ export default function Calculator() {
   };
 
   return (
-    <div className="p-8 md:mb-40 bg-white/95 md:rounded-[50px] shadow-lg w-[540px]      flex flex-col justify-between">
+    <div style={{zIndex:100}} className="p-8 md:mb-40 bg-white/95 md:rounded-[50px] shadow-lg w-[540px]      flex flex-col justify-between">
       <h2 className="text-lg text-blue-500 font-semibold   text-center">ფასის გამოთვლა</h2>
       
       <div className="mb-4">

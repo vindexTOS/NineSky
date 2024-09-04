@@ -6,7 +6,7 @@ import FacebookLogo from "../../assets/Facebook-logo.png"
 import StaticMapComponent from './Map';
  const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-10 ">
+    <footer style={{zIndex:1000}} className="bg-gray-800 text-white py-10 ">
     <div className="   flex md:flex-row flex-col  items-center justify-between px-20  w-[100%]    ">
       {/* Map Component */}
       <div className=" flex  flex-col gap-5  text-center">
