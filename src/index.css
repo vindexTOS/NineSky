@@ -31,3 +31,18 @@
   .slide-in-left {
     animation: slideInFromLeft 1s ease-out;
   }
+
+ /* Adjust the width of the modal */
+.custom-swal-container {
+  width: 100vw; /* Adjust the width as needed */
+  z-index: 20000;
+}
+
+/* Customize the text size */
+.custom-swal-title {
+  font-size: 1rem; /* Adjust the title font size as needed */
+}
+
+.custom-swal-content {
+  font-size: 12px; /* Adjust the content font size as needed */
+}

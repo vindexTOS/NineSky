@@ -1,50 +1,89 @@
-import { useState } from 'react';
-import { Layout, Menu } from 'antd';
+import { useState } from "react";
+import { Layout, Menu } from "antd";
 import {
-
   SettingOutlined,
-
   DropboxOutlined,
   EnvironmentOutlined,
   DollarOutlined,
-} from '@ant-design/icons';
+  LogoutOutlined,
+} from "@ant-design/icons";
+import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import Swal from 'sweetalert2';
 
-import { Content } from 'antd/es/layout/layout';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Content } from "antd/es/layout/layout";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const { Sider } = Layout;
 
 export default function UserMain() {
-  const navigation = useNavigate()
-  const [selectedKey, setSelectedKey] = useState('parcel/storage');
-  const handleMenuSelect = ({ key }: { key: string }) => {
-    setSelectedKey(key);
-    navigation(key)
+  const navigate = useNavigate();
+  const [selectedKey, setSelectedKey] = useState("parcel/storage");
+  const handleMenuSelect = async ({ key }: { key: string }) => {
+    if (key === 'logout') {
+      // Show SweetAlert2 confirmation
+      const result = await Swal.fire({
+        title: 'ნამდვილად გსურთ გამოსვლა ?',
+        text: '',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'დიახ, log out',
+        cancelButtonText: 'არა, cancel',
+        customClass: {
+          container: 'custom-swal-container',
+          title: 'custom-swal-title',
+          content: 'custom-swal-content',
+        },
+      });
+
+      if (result.isConfirmed) {
+        // Add your logout logic here
+        // For example, clear authentication tokens or make an API call
+        // After logout logic, navigate to the login page or home page
+        navigate('/'); // Update this path as needed
+      }
+    } else {
+      setSelectedKey(key);
+      navigate(key);
+    }
   };
+  const [collaps, setCollaps] = useState(true);
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout className=" " style={{ height: "100%" }}>
       <Sider
         collapsible
         defaultChecked
+        collapsed={collaps}
         style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
+          overflow: "auto",
+          height: "100%",
+          position: "fixed",
           left: 0,
           top: 0,
           bottom: 0,
           zIndex: 10000,
         }}
       >
-        <div className="logo" style={{ margin: '16px', textAlign: 'center' }}>
-          <h2 className="text-white text-[12px]">Nine Sky</h2>
+        <div className="logo" style={{ margin: "16px", textAlign: "center" }}>
+          {/* <h2 className="text-white text-[12px]">Nine Sky</h2> */}
+          {!collaps ? (
+            <IoIosArrowBack
+              onClick={() => setCollaps(!collaps)}
+              className="text-white text-[2.5rem]"
+            />
+          ) : (
+            <IoIosArrowForward
+              onClick={() => setCollaps(!collaps)}
+              className="text-white text-[2.5rem]"
+            />
+          )}
         </div>
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={[selectedKey]}
           onSelect={handleMenuSelect}
-
         >
           <Menu.Item key="parcel/storage" icon={<DropboxOutlined />}>
             ამანათები
@@ -58,12 +97,15 @@ export default function UserMain() {
           <Menu.Item key="settings" icon={<SettingOutlined />}>
             პარამეტრები
           </Menu.Item>
+
+          <Menu.Item key="logout" icon={<LogoutOutlined />}>
+            გამოსვლა
+          </Menu.Item>
         </Menu>
       </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div className="h-[100vh] w-[100vw] flex items-center justify-center">
-
+      <Layout className="site-layout md:ml-[200px] ml-[50px] ">
+        <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+          <div className="h-[100vh] w-[100%] flex items-center justify-center">
             <Outlet />
           </div>
         </Content>

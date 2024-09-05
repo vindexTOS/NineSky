@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Calculator() {
   const [selectedCountry, setSelectedCountry] = useState('china');
@@ -14,6 +14,13 @@ export default function Calculator() {
     setPrice(calculatedPrice.toFixed(2));
   };
 
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    
+    const timer = setTimeout(() => setIsVisible(true), 100); // Delay to ensure the page has loaded
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div style={{zIndex:100}} className="p-8 md:mb-40 bg-white/95 md:rounded-[50px] shadow-lg w-[540px]      flex flex-col justify-between">
       <h2 className="text-lg text-blue-500 font-semibold   text-center">ფასის გამოთვლა</h2>
