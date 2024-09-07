@@ -3,7 +3,8 @@ import React from "react";
 // import BackGroundImage from "../../assets/background.webp";
 // import BackGroundImage from "../../assets/whitemap.jpg";
 // import BackGroundImage from "../../assets/Darkmap.jpg";
-import BackGroundImage from "../../assets/particleWorld.jpg";
+// import BackGroundImage from "../../assets/particleWorld.jpg";
+import BackGroundImage from "../../assets/skytwo.jpg";
 
 import Calculator from "./Calculator";
 import Header from "./Header";

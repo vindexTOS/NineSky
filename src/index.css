@@ -46,3 +46,16 @@
 .custom-swal-content {
   font-size: 12px; /* Adjust the content font size as needed */
 }
+
+.custom-menu .ant-menu {
+  background-color: #2fb9ff !important; /* Ensure background color applies */
+}
+
+.custom-menu .ant-menu-item {
+  color: #ffffff; /* Optional: Text color for menu items */
+}
+
+.custom-menu .ant-menu-item-selected {
+  background-color: #1a8cff !important; /* Optional: Background color for selected item */
+  color: #ffffff; /* Optional: Text color for selected item */
+}

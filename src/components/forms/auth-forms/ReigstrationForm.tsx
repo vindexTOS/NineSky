@@ -30,7 +30,7 @@ export default function RegistrationForm() {
     <>
      <Button    onClick={showModal}
         type="default" 
-        className="bg-orange-500 text-white border-none hover:bg-gray-100 rounded-md py-5"
+        className="bg-orange-400 text-white border-none hover:bg-gray-100 rounded-md py-5"
       >
          <UserAddOutlined />
          <span>Register</span>
@@ -44,7 +44,7 @@ export default function RegistrationForm() {
         centered
         className="custom-modal"
       >
-        <Form layout="vertical">
+        <Form layout="vertical" >
           <Form.Item>
             <Switch
               checkedChildren="Juridical"

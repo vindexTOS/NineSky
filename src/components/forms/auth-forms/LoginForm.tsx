@@ -3,10 +3,11 @@ import { Modal, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css'; // Import Ant Design styles
 import 'tailwindcss/tailwind.css'; // Import TailwindCSS styles
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
   const [visible, setVisible] = useState(false);
-
+  const navigate = useNavigate()
   const showModal = () => {
     setVisible(true);
   };
@@ -23,7 +24,7 @@ export default function LoginForm() {
     <>
        <Button    onClick={showModal}
         type="primary" 
-        className="bg-blue-800 hover:bg-blue-700 text-white border-none rounded-md py-5"
+        className="bg-blue-500 hover:bg-blue-700 text-white border-none rounded-md py-5"
       >
           
           <LoginOutlined />
@@ -49,7 +50,7 @@ export default function LoginForm() {
             prefix={<LockOutlined />}
             className="mb-3"
           />
-          <Button type="primary" block>
+          <Button onClick={()=>navigate("/user/parcel/storage")} type="primary" block>
             Login
           </Button>
         </div>
