@@ -6,7 +6,7 @@ export default function AuthNavBar() {
   return (
     <nav style={{zIndex:1000}} className="md:w-full w-[100vw] bg-[#2fb9ff]    lg:px-60  fixed top-0 left-0 h-[95px] flex items-center justify-between px-10 z-100">
     <div>
-      <h1 className="text-white text-2xl font-bold  md:flex hidden">Nine Sky</h1>
+      <h1 className="text-white text-2xl font-bold  md:flex hidden">NineSky</h1>
     </div>
     <div className="flex items-center space-x-4">
     <div className="md:w-[120px] md:h-[34px] w-[90px] bg-white rounded-[8px]   flex items-center justify-center flex-col "> 

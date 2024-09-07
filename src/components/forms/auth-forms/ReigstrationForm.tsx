@@ -30,7 +30,7 @@ export default function RegistrationForm() {
     <>
      <Button    onClick={showModal}
         type="default" 
-        className="bg-orange-400 text-white border-none hover:bg-gray-100 rounded-md py-5"
+        className="bg-orange-400 text-white border-none hover:bg-gray-100 rounded-md py-5  max_smm:w-[90%]"
       >
          <UserAddOutlined />
          <span>Register</span>

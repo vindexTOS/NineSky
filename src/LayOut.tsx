@@ -10,12 +10,12 @@ export default function LayOut({ children }: { children: ReactNode }) {
   return (
     <main className="flex flex-col h-100">
       
-      {location.pathname.includes('/user')  ? <AuthNavBar/> : <NonAuthNavBar />}
+      {location.pathname.includes('/user')  ? <AuthNavBar/> : location.pathname.includes('/admin') ? '' : <NonAuthNavBar />}
      
        
       <div> {children}</div>
 
-      <Footer />
+     {!location.pathname.includes('/admin')  && <Footer />}
     </main>
   );
 }

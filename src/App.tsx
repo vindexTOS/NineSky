@@ -12,6 +12,8 @@ import TakenOut from './pages/UserDashboard/ParcelScreens/TakenOut';
 import Address from './pages/UserDashboard/Address';
 import Transactions from './pages/UserDashboard/Transactions';
 import Settings from './pages/UserDashboard/Settings';
+import AdminLogin from './pages/Admin/AdminLogin';
+import AdminDashboard from './pages/Admin/AdminDashboard';
 
 
 const NotFound = () => <h1>404 - Not Found</h1>;
@@ -38,7 +40,9 @@ function App() {
   <Route path="transactions" element={<Transactions />} />
   <Route path="settings" element={<Settings />} />
         </Route>
-
+{/* admin */}
+ <Route path='/admin' element={<AdminLogin/>} />
+ <Route path='/admin-dashboard' element={<AdminDashboard/>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

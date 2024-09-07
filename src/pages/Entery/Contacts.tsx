@@ -12,7 +12,7 @@ export default function Contaxts() {
       return () => clearTimeout(timer);
     }, []);
   return (
-    <div className={`p-8 bg-white/85 bottom-[-18rem]  absolute md:rounded-[40px] w-[500px]  gap-2 items-center flex flex-col  text-center ${isVisible ? 'fade-in-up' : ''}`}>
+    <div className={`p-8 bg-white/85 bottom-[-18rem] w-[90%] md:w-[500px] absolute md:rounded-[40px]   gap-2 items-center flex flex-col  text-center ${isVisible ? 'fade-in-up' : ''}`}>
       <h1 className="text-[2rem] font-bold text-blue-500 mb-6 text-shadow-lg">
         <span className={isVisible ? 'slide-in-left' : ''}> კონტაქტი</span>
       </h1>

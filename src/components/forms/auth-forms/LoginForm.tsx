@@ -24,7 +24,7 @@ export default function LoginForm() {
     <>
        <Button    onClick={showModal}
         type="primary" 
-        className="bg-blue-500 hover:bg-blue-700 text-white border-none rounded-md py-5"
+        className="bg-blue-500 hover:bg-blue-700 text-white border-none rounded-md py-5    max_smm:w-[90%]"
       >
           
           <LoginOutlined />

@@ -25,10 +25,10 @@ export default function EnteryPage() {
        <Particals/>
 
  <div   className="w-[100%] h-[90%]  items-center flex  justify-between " >
-      <div className="  w-[100%] gap-50      justify-between flex flex-col  py-6     ">
-      <div></div>  <Header />
- 
-        <div className="flex  items-end justify-end     py-6 gap-6   ">
+      <div className="  w-[100%] gap-50  max_smm:items-center   max_smm:mt-10 max_smm:gap-[3rem]   justify-between flex flex-col  py-6     ">
+      
+      <Header />
+        <div className="flex  items-end justify-end  max_smm:w-[100%]   max_smm:items-center   max_smm:justify-center   py-6 gap-6   ">
         <Calculator />
         </div>
       </div>
