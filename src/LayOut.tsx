@@ -8,7 +8,7 @@ import AuthNavBar from "./components/navbar/AuthNavBar";
 export default function LayOut({ children }: { children: ReactNode }) {
   const location  =useLocation()
   return (
-    <main className="flex flex-col h-100">
+    <main className="   main">
       
       {location.pathname.includes('/user')  ? <AuthNavBar/> : location.pathname.includes('/admin') ? '' : <NonAuthNavBar />}
      

@@ -59,3 +59,42 @@
   background-color: #1a8cff !important; /* Optional: Background color for selected item */
   color: #ffffff; /* Optional: Text color for selected item */
 }
+
+
+.header{
+
+}
+.entery{
+
+}
+
+.main{
+   height: 100vh;
+   display: flex;
+   flex-direction: column;
+   background-color: 'red';
+}
+.calculator {
+
+}
+
+@media screen and (max-height: 899px) and (min-width: 1254px) {
+  .header {
+ 
+   position: absolute;
+   top:10rem
+  }
+  .entery{
+    height: 2000px;
+   
+  }
+  .main{
+    height: 100%;
+    justify-content: space-between;
+  }
+  .calculator {
+    position: absolute;
+    top:20rem
+  }
+ 
+}

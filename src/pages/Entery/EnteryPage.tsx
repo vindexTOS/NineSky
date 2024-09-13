@@ -12,7 +12,7 @@ import Contacts from "./Contacts";
 import Particals from "../../components/particals/Particals";
 export default function EnteryPage() {
   return (
-    <main className="md:h-[100vh] pt-[5rem] md:pt-50 bg-no-repeat bg-cover bg-center">
+    <main className="md:h-[100vh] pt-[5rem] md:pt-50 bg-no-repeat bg-cover bg-center entery">
       <div
         className="w-full  md:h-[100vh] bg-no-repeat bg-center flex  items-end justify-start md:px-20"
         style={{

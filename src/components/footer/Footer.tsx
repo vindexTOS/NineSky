@@ -7,6 +7,7 @@ import { FaFacebook } from "react-icons/fa";
 import StaticMapComponent from './Map';
 import { MdOutlineEmail } from "react-icons/md";
 import { FaTelegram } from "react-icons/fa6";
+
  const Footer = () => {
   return (
     <footer style={{zIndex:1000}} className="bg-gray-800 text-white py-10 ">
