@@ -10,7 +10,7 @@ export default function Header() {
   }, []);
 
   return (
-    <div style={{zIndex:100}} className={` bg-white/95    shadow-lg  max_smm:rounded-[5px]  max_smm:p-10  md:rounded-[20px] md:p-8  md:w-[500px] w-[95%]   items-center flex flex-col  text-center ${isVisible ? 'fade-in-up' : ''}`}>
+    <div style={{zIndex:100}} className={` bg-white/95  header   shadow-lg  max_smm:rounded-[5px]  max_smm:p-10  md:rounded-[20px] md:p-8  md:w-[500px] w-[95%]   items-center flex flex-col  text-center ${isVisible ? 'fade-in-up' : ''}`}>
       <h1 className="text-[1.5rem] font-bold text-blue-500 mb-6 text-shadow-lg">
         <span className={isVisible ? 'slide-in-left' : ''}> ამანათები ჩინეთიდან და თურქეთიდან</span>
       </h1>

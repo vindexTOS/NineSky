@@ -22,7 +22,7 @@ export default function Calculator() {
     return () => clearTimeout(timer);
   }, []);
   return (
-    <div style={{zIndex:100}} className={`p-8 md:mb-40   max_smm:rounded-[5px]  max_smm:p-10  bg-white/95 md:rounded-[50px] shadow-lg w-[540px]   max_smm:w-[95%]    flex flex-col justify-between ${isVisible ? 'fade-in-up' : ''}`}>
+    <div style={{zIndex:100}} className={`p-8 md:mb-40 calculator   max_smm:rounded-[5px]  max_smm:p-10  bg-white/95 md:rounded-[50px] shadow-lg w-[540px]   max_smm:w-[95%]    flex flex-col justify-between ${isVisible ? 'fade-in-up' : ''}`}>
       <h2 className="text-lg text-blue-500 font-semibold   text-center">ფასის გამოთვლა</h2>
       
       <div className="mb-4">

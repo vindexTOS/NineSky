@@ -31,6 +31,9 @@ export default {
         // => @media (max-width: 639px) { ... }
         max_smm1: { max: '565px' },
         max_smm: { max: '500px' },
+      },    height: {
+       
+        'laptop-screen': '700px',
       },
     },
   },
