@@ -1,21 +1,19 @@
-import React, { ReactNode } from "react";
-import NonAuthNavBar from "./components/navbar/NonAuthNavBar";
+import   { ReactNode, useEffect } from "react";
+ 
 import Footer from "./components/footer/Footer";
-import LoginForm from "./components/forms/auth-forms/LoginForm";
-import { useLocation } from "react-router-dom";
-import AuthNavBar from "./components/navbar/AuthNavBar";
+ 
+import NavBar from "./components/navbar/NavBar";
 
 export default function LayOut({ children }: { children: ReactNode }) {
-  const location  =useLocation()
+ 
   return (
     <main className="flex flex-col h-100">
       
-      {location.pathname.includes('/user')  ? <AuthNavBar/> : location.pathname.includes('/admin') ? '' : <NonAuthNavBar />}
-     
+      {/* {location.pathname.includes('/user')  ? <AuthNavBar/> : location.pathname.includes('/admin') ? '' : <NonAuthNavBar />} */}
+      <NavBar/>
        
       <div> {children}</div>
-
-     {!location.pathname.includes('/admin')  && <Footer />}
+ <Footer />
     </main>
   );
 }

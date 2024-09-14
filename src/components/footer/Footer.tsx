@@ -7,9 +7,12 @@ import { FaFacebook } from "react-icons/fa";
 import StaticMapComponent from './Map';
 import { MdOutlineEmail } from "react-icons/md";
 import { FaTelegram } from "react-icons/fa6";
+import { useLocation } from 'react-router-dom';
  const Footer = () => {
+  const location  =useLocation()
+
   return (
-    <footer style={{zIndex:1000}} className="bg-gray-800 text-white py-10 ">
+  <> { !location.pathname.includes('/admin')  && <footer style={{zIndex:1000}} className="bg-gray-800 text-white py-10 ">
     <div className="  max_smm:gap-10  flex md:flex-row flex-col  items-center justify-between px-20  w-[100%]    ">
       {/* Map Component */}
       <div className=" flex  flex-col gap-5  text-center">
@@ -47,7 +50,7 @@ import { FaTelegram } from "react-icons/fa6";
  
       </div>
  
-  </footer>
+  </footer>}</> 
   );
 };
 
