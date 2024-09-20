@@ -22,7 +22,7 @@ const NotFound = () => <h1>404 - Not Found</h1>;
 
 function App() {
   return (
-    <LayOut>
+    <LayOut  >
       <Routes>
         <Route path="/" element={<EnteryPage />} />
 

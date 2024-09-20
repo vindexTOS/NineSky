@@ -109,7 +109,7 @@ export default function UserMain() {
       </Sider>
       <Layout className="site-layout md:ml-[200px] ml-[50px] ">
         <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
-          <div className="h-[100vh] w-[100%] flex items-center justify-center">
+          <div className=" min-h-[100vh] h-[100%] w-[100%] flex items-center justify-center">
             <Outlet />
           </div>
         </Content>

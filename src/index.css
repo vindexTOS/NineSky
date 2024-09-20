@@ -69,8 +69,10 @@
 }
 
 .main{
-   height: 100vh;
+ 
    display: flex;
+   justify-content: space-between;
+   
    flex-direction: column;
    background-color: 'red';
 }
