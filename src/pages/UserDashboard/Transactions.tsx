@@ -11,7 +11,7 @@ export default function Transactions() {
 
     setTimeout(() => {
       setLoading(false)
-    }, 1000)
+    }, 500)
   }, [])
   if (loading) {
     return <TablesLoading />

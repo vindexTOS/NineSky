@@ -25,7 +25,7 @@ export default function TransactionsTable() {
       key: 'transactionId',
     },
     {
-      title: 'რაოდენობა',
+      title: 'თანხა',
       dataIndex: 'amount',
       key: 'amount',
     },

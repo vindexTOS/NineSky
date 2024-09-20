@@ -1,63 +1,66 @@
-import React from 'react';
+import React, { FC } from 'react';
+import ParcelsCard from './ParcelsCard';
+import { FakeParcldata } from '../../assets/data/fakeJson';
+ 
 
-export default function ParcelsCard({ parcel }:{parcel:any}) {
+type ParcelsPropType = { 
+      data:any 
+      color:string 
+      title:string 
+}
+
+const ParcelsTable:FC<ParcelsPropType > = ({data,color,title}) => {
+  const [parcels, setParcels] = React.useState<any>([]);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const pageSize = 5; // Number of parcels to display per page
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setParcels(data);
+    };
+
+    fetchData();
+  }, []);
+
+  // Calculate the current parcels to display
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentParcels = parcels.slice(startIndex, startIndex + pageSize);
+  const totalPages = Math.ceil(parcels.length / pageSize);
+
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
   return (
-    <div className="bg-white shadow-md rounded-lg mb-4 overflow-hidden">
-      {/* Upper Part */}
-      <div className="bg-blue-400  text-white p-4">
- 
-        <div className="flex flex-wrap justify-between  text-[1rem]">
-          <div className="flex items-center">
-            <span className="font-medium mr-1">რეისი:</span>
-            <span>{parcel.race}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">რაოდენობა:</span>
-            <span>{parcel.amount}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">ფასი:</span>
-            <span>{parcel.price}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">ინვოისი:</span>
-            <span>{parcel.invoice}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">დეკლარაცია:</span>
-            <span>{parcel.declaration}</span>
-          </div>
-        </div>
+    <div className="h-full">
+      <div className="flex flex-col gap-4">
+        <h1 className="text-[1.5rem] text-gray-400">{title}</h1>
       </div>
+      {currentParcels.map((parcel: any, index: number) => (
+        <ParcelsCard key={index} parcel={parcel}  color={color} />
+      ))}
 
-      {/* Lower Part */}
-      <div className="p-4 bg-gray-100">
- 
-        <div className="flex flex-wrap justify-between  text-[1rem]">
-          <div className="flex items-center">
-            <span className="font-medium mr-1">თრექინგი ID:</span>
-            <span>{parcel.trackingId}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">წონა:</span>
-            <span>{parcel.weight}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">მოცულობა:</span>
-            <span>{parcel.volume}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">ჩამოტანა:</span>
-            <span>{parcel.takeOutPrice}</span>
-          </div>
-          <div className="flex items-center">
-            {/* <span className="font-medium mr-1">დეკლარაცია:</span> */}
-            <button className="ml-2 bg-green-500 text-white px-2 py-2 rounded hover:bg-blue-600  ">
-             დეკლარაცია
-            </button>
-          </div>
-        </div>
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          className={`px-4 py-2 bg-gray-200 rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+           წინა
+        </button>
+        <span>{`Page ${currentPage} of ${totalPages}`}</span>
+        <button
+          className={`px-4 py-2 bg-gray-200 rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+         შემდეგი
+        </button>
       </div>
     </div>
   );
 }
+
+export default ParcelsTable
