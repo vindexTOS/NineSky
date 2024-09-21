@@ -1,15 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Input, Button, Form, Switch, Select, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, IdcardOutlined, GlobalOutlined, EnvironmentOutlined, UserAddOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css'; // Import Ant Design styles
 import 'tailwindcss/tailwind.css'; // Import TailwindCSS styles
-
+import { useMutation } from '@tanstack/react-query';
+import { RegisterType } from '../../../types/authTypes';
+import { RegisterPostRequest } from '../../../API/Auth/Auth';
+import Loading from '../../status/Loading';
+import { useNavigate } from 'react-router-dom';
+ import ErrorModal from '../../status/Error';
 const { Option } = Select;
 
 export default function RegistrationForm() {
   const [visible, setVisible] = useState(false);
-  const [isJuridical, setIsJuridical] = useState(false);
+  const nav = useNavigate()
+  // const [isJuridical, setIsJuridical] = useState(false);
+  const mutation = useMutation({
+    mutationFn: (body: RegisterType) => {
+      return RegisterPostRequest(body);
+    },
+    onError(err) {
+ 
+    },
+    onSuccess(suc) {
+      nav("/user/parcel/storage");
+    }
+  });
 
+
+
+
+  
   const showModal = () => {
     setVisible(true);
   };
@@ -22,21 +43,29 @@ export default function RegistrationForm() {
     setVisible(false);
   };
 
-  const handleSwitchChange = (checked:boolean) => {
-    setIsJuridical(checked);
+  // const handleSwitchChange = (checked: boolean) => {
+  //   setIsJuridical(checked);
+  // };
+  const onFinish = async (values:RegisterType) => {
+      
+     await mutation.mutateAsync({...values, name:values.first_name})
   };
 
+  const {isPending, error ,isError} = mutation
+
+ 
   return (
     <>
-     <Button    onClick={showModal}
-        type="default" 
+      <Button onClick={showModal}
+        type="default"
         className="bg-orange-400 text-white border-none hover:bg-gray-100 rounded-md py-5  max_smm:w-[90%]"
       >
-         <UserAddOutlined />
-         <span>Register</span>
+        <UserAddOutlined />
+        <span>რეგისტრაცია</span>
       </Button>
+
       <Modal
-        title="Register"
+        title="რეგისტრაცია"
         visible={visible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -44,35 +73,35 @@ export default function RegistrationForm() {
         centered
         className="custom-modal"
       >
-        <Form layout="vertical" >
-          <Form.Item>
+        <Form onFinish={onFinish} layout="vertical" >
+          {/* <Form.Item>
             <Switch
               checkedChildren="Juridical"
               unCheckedChildren="Physical"
               onChange={handleSwitchChange}
               defaultChecked={isJuridical}
             />
-          </Form.Item>
+          </Form.Item> */}
 
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="flex-1 space-y-4">
               <Form.Item
-                label="Name (Georgian)"
-                name="nameGeorgian"
-                rules={[{ required: true, message: 'Please enter your name in Georgian!' }]}
-              >
-                <Input placeholder="Name in Georgian" prefix={<UserOutlined />} />
+                label="სახელი"
+                name="first_name"
+                rules={[{ required: true, message: 'გთხოვთ შეიყვანოთ თქვენი სახელი!' }]}
+              > 
+                <Input placeholder="სახელი ქართულად" prefix={<UserOutlined />} />
               </Form.Item>
 
               <Form.Item
-                label="Last Name (Georgian)"
-                name="lastNameGeorgian"
-                rules={[{ required: true, message: 'Please enter your last name in Georgian!' }]}
+                label="გვარი"
+                name="last_name"
+                rules={[{ required: true, message: 'გთხოვთ შეიყვანოთ თქვენი გვარი!' }]}
               >
-                <Input placeholder="Last Name in Georgian" prefix={<UserOutlined />} />
+                <Input placeholder="გვარი ქართულად" prefix={<UserOutlined />} />
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 label="Name (English)"
                 name="nameEnglish"
                 rules={[{ required: true, message: 'Please enter your name in English!' }]}
@@ -86,22 +115,41 @@ export default function RegistrationForm() {
                 rules={[{ required: true, message: 'Please enter your last name in English!' }]}
               >
                 <Input placeholder="Last Name in English" prefix={<UserOutlined />} />
+              </Form.Item> */}
+
+              <Form.Item
+                label="ID ნომერი"
+                name="personal_number"
+                rules={[{ required: true, message: 'გთხოვთ შეიყვანეთ თქვენი ID ნომერი!' }, {
+                  validator: (_, value) => {
+                    const regex = /^\d+$/; // Regular expression to check if the value contains only digits
+                    if (!value || regex.test(value)) {
+                      return Promise.resolve(); // Validation passed
+                    }
+                    return Promise.reject(new Error('ID  ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს!')); // Validation failed
+                  },
+                },]}
+              >
+                <Input placeholder="ID ნომერი" prefix={<IdcardOutlined />} />
               </Form.Item>
 
               <Form.Item
-                label="ID Number"
-                name="idNumber"
-                rules={[{ required: true, message: 'Please enter your ID number!' }]}
+                label="ტელეფონის ნომერი"
+                name="phone_number"
+                rules={[
+                  { required: true, message: 'გთხოვთ შეიყვანეთ თქვენი ტელეფონის ნომერი!' },
+                  {
+                    validator: (_, value) => {
+                      const regex = /^\d+$/; // Regular expression to check if the value contains only digits
+                      if (!value || regex.test(value)) {
+                        return Promise.resolve(); // Validation passed
+                      }
+                      return Promise.reject(new Error('ტელეფონის ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს!')); // Validation failed
+                    },
+                  },
+                ]}
               >
-                <Input placeholder="ID Number" prefix={<IdcardOutlined />} />
-              </Form.Item>
-
-              <Form.Item
-                label="Phone Number"
-                name="phoneNumber"
-                rules={[{ required: true, message: 'Please enter your phone number!' }]}
-              >
-                <Input placeholder="Phone Number" prefix={<PhoneOutlined />} />
+                <Input placeholder="ტელეფონის ნომერი" prefix={<PhoneOutlined />} />
               </Form.Item>
             </div>
 
@@ -109,12 +157,12 @@ export default function RegistrationForm() {
               <Form.Item
                 label="Email"
                 name="email"
-                rules={[{ required: true, message: 'Please enter your email!' }, { type: 'email', message: 'Please enter a valid email!' }]}
+                rules={[{ required: true, message: 'გთხოვთ შეიყვანოთ ელ-ფოსტა!' }, { type: 'email', message: 'გთხოვთ შეიყვანოთ თქვენი ელ-ფოსტა!' }]}
               >
-                <Input placeholder="Email" prefix={<MailOutlined />} />
+                <Input placeholder="ელ-ფოსტა" prefix={<MailOutlined />} />
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 label="City"
                 name="city"
                 rules={[{ required: true, message: 'Please enter your city!' }]}
@@ -135,50 +183,52 @@ export default function RegistrationForm() {
                 name="office"
                 rules={[{ required: true, message: 'Please select an office!' }]}
               >
+                
                 <Select placeholder="Select an office">
                   <Option value="office1">Office 1</Option>
                   <Option value="office2">Office 2</Option>
                   <Option value="office3">Office 3</Option>
-                  {/* Add more office options as needed */}
+              
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item
-                label="Password"
+                label="პაროლი"
                 name="password"
-                rules={[{ required: true, message: 'Please enter your password!' }]}
+                rules={[{ required: true, message: 'გთხოვთ შეიყვანეთ პაროლი!', }, { min: 6, message: 'პაროლი უნდა იყოს მინიმუმ 6 სიმბოლო!' }]}
               >
-                <Input.Password placeholder="Password" prefix={<LockOutlined />} />
+                <Input.Password placeholder="პაროლი" prefix={<LockOutlined />} />
               </Form.Item>
-
-              <Form.Item
+              <Loading loading={isPending} />
+               { isError &&  <ErrorModal error={error?.message  || "შეცდომა"} />}
+              {/* <Form.Item
                 label="Repeat Password"
                 name="repeatPassword"
                 rules={[{ required: true, message: 'Please repeat your password!' }]}
               >
                 <Input.Password placeholder="Repeat Password" prefix={<LockOutlined />} />
-              </Form.Item>
+              </Form.Item> */}
             </div>
           </div>
 
           <Form.Item
-            name="terms"
+        
             valuePropName="checked"
-            rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('You must accept the terms and conditions!') }]}
+            rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('გთხოვთ გაეცანით და დაეთანხხმეთ მომსახურეობის პირობებს') }]}
           >
             <Checkbox>
-              I have read and agree to the <a href="#">Terms of Service</a>
+              ვეთანხმები <a href="#">მომსახურების პირობებებს</a>
             </Checkbox>
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
-              Register
+              რეგისტრაცია
             </Button>
           </Form.Item>
         </Form>
       </Modal>
- 
+
       <style jsx>{`
         .custom-modal .ant-modal {
           backdrop-filter: blur(10px); /* Apply blur effect to background */

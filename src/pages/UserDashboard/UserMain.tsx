@@ -12,10 +12,12 @@ import Swal from 'sweetalert2';
 
 import { Content } from "antd/es/layout/layout";
 import { Outlet, useNavigate } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 const { Sider } = Layout;
 
 export default function UserMain() {
+  const cookies = new Cookies()
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState("parcel/storage");
   const handleMenuSelect = async ({ key }: { key: string }) => {
@@ -38,10 +40,13 @@ export default function UserMain() {
       });
 
       if (result.isConfirmed) {
-        // Add your logout logic here
-        // For example, clear authentication tokens or make an API call
-        // After logout logic, navigate to the login page or home page
-        navigate('/'); // Update this path as needed
+         
+          
+         cookies.remove("token")
+         setTimeout(()=>{
+          navigate('/');  
+
+         },500)
       }
     } else {
       setSelectedKey(key);

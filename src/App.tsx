@@ -14,6 +14,8 @@ import Transactions from './pages/UserDashboard/Transactions';
 import Settings from './pages/UserDashboard/Settings';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import Guard from './Guard';
+import MainPageGuard from './Guards/MainPageGuard';
 
 
 const NotFound = () => <h1>404 - Not Found</h1>;
@@ -24,9 +26,9 @@ function App() {
   return (
     <LayOut  >
       <Routes>
-        <Route path="/" element={<EnteryPage />} />
+        <Route path="/" element={<MainPageGuard><EnteryPage /></MainPageGuard>} />
 
-        <Route path="/user" element={<UserMain />}>
+        <Route path="/user" element={<Guard><UserMain /></Guard>}>
           {/* parcel */}
           <Route path="parcel" element={<Parcel />}>
             {/* parcel  children*/}
