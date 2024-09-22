@@ -162,7 +162,7 @@ export default function RegistrationForm() {
                 <Input placeholder="ელ-ფოსტა" prefix={<MailOutlined />} />
               </Form.Item>
 
-              {/* <Form.Item
+              <Form.Item
                 label="City"
                 name="city"
                 rules={[{ required: true, message: 'Please enter your city!' }]}
@@ -190,7 +190,7 @@ export default function RegistrationForm() {
                   <Option value="office3">Office 3</Option>
               
                 </Select>
-              </Form.Item> */}
+              </Form.Item>
 
               <Form.Item
                 label="პაროლი"
