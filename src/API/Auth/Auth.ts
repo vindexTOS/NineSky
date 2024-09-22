@@ -30,7 +30,7 @@ export const LoginPostRequest = async (body: LoginType): Promise<string> => {
     } catch (error) {
         console.log(error);
         const err: any = error;
-        throw new Error(err);
+        throw new Error(err.response.data.message);
     }
 };
 
