@@ -4,6 +4,7 @@ import { ApiManager } from "../ApiManager";
 
 export const UpdateUserInfo = async (id: string, token: string, body: RegisterType) => {
 
+ 
 
     try {
         const res: any = await ApiManager(`user/update/${id}`, {

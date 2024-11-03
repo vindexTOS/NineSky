@@ -2,15 +2,31 @@ import React from 'react';
 import { Form, Input, Button, Typography, Card } from 'antd';
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are included
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { adminAuth } from '../../API/Auth/Auth';
+import { LoginType } from '../../types/authTypes';
 
 const { Title } = Typography;
 
 export default function AdminLogin() {
     const navigate = useNavigate()
-  const onFinish = (values:string) => {
-    console.log('Success:', values);
-    // Handle login logic here
-    navigate("/admin-dashboard")
+
+
+    const mutation = useMutation({
+      mutationFn: (body: LoginType) => {
+        return adminAuth(body)
+      },onError(err){
+         console.log(err)
+      },
+      onSuccess() {
+        navigate("/admin-dashboard")
+      }
+    })
+  
+  const onFinish = async (values: LoginType) => {
+ 
+    await mutation.mutateAsync(values)
+ 
   };
 
   return (

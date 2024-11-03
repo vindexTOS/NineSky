@@ -8,33 +8,45 @@ import { useQuery } from '@tanstack/react-query';
 import { GetUserInfo } from '../../API/User/GetRequests';
 export default function AuthNavBar() {
   const [userInfo,setUserInfo] = useState<any>()
+  const [decodedUser,setDecodedUser]= useState<any>(null)
   const cookies = new Cookies()
 
+const decodeCookie = ()=>{
+    const token = cookies.get("token")
 
-
+    if(token){
+       const decoded = jwt_decode(token)
+      
+       setDecodedUser(decoded)
+       
+    }
+}
 useEffect(()=>{
-  let token = cookies.get("token")
-  const decode = async () =>{
-    let decodedUser = await jwt_decode(token)
-    console.log(decodedUser )
-    setUserInfo(decodedUser)
-  }
-
- decode()
-
+decodeCookie()
 },[])
-const { data, isLoading, isError, error } = useQuery({
-  queryKey: ["user-info", userInfo ? userInfo.sub : null],
-  queryFn: () => userInfo ? GetUserInfo(userInfo.sub) : Promise.resolve(),
-  enabled: !!userInfo 
-});
 
-  if(isLoading){
-    return <div>Loading...</div>
+// const { data, isPending, isError, error } = useQuery({
+//   queryKey: ["user-info", userInfo ? userInfo.sub : null],
+//   queryFn: () => userInfo ? GetUserInfo(userInfo.sub) : Promise.resolve(),
+//   enabled: !!userInfo 
+// });
+
+useEffect(() => {
+  if (decodedUser && decodedUser.sub) {
+    const f = async ()=>{
+      const data: any =  await GetUserInfo(decodedUser.sub);
+      setUserInfo({...decodedUser, ...data?.data});
+ 
+    }
+    f()
   }
+}, [decodedUser]);
 
 
- if(userInfo?.username){
+// useEffect(()=>{
+// console.log(userInfo)
+// },[userInfo])
+ if(userInfo?.first_name){
 
   return (
     <nav style={{zIndex:1000}} className="md:w-full w-[100vw] bg-[#2fb9ff]    lg:px-60  fixed top-0 left-0 h-[95px] flex items-center justify-between px-10 z-100">
@@ -45,7 +57,7 @@ const { data, isLoading, isError, error } = useQuery({
     <div className="md:w-[120px] md:h-[34px] w-[90px] bg-white rounded-[8px]   flex items-center justify-center flex-col "> 
 
        <h1 className="text-gray-500 md:text-[12px] text-[10px]" >გადასახდელი</h1>
-       <p className=" text-green-800 text-[10px] md:text-[14px]">${ data.data.amount_to_paid}</p>
+       <p className=" text-green-800 text-[10px] md:text-[14px]">${userInfo.balance}</p>
     </div>
  
       <Avatar  className="md:flex hidden" size="large" icon={<UserOutlined />} />

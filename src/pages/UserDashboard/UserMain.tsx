@@ -40,13 +40,15 @@ export default function UserMain() {
       });
 
       if (result.isConfirmed) {
-         
-          
-         cookies.remove("token")
-         setTimeout(()=>{
-          navigate('/');  
 
-         },500)
+
+        cookies.remove("token", { path: '/' });
+        setTimeout(() => {
+          navigate('/');
+
+        }, 500)
+
+
       }
     } else {
       setSelectedKey(key);
@@ -56,7 +58,7 @@ export default function UserMain() {
   const [collaps, setCollaps] = useState(true);
   return (
     <Layout className=" " style={{ height: "100%" }}>
-      <Sider   
+      <Sider
         collapsible
         defaultChecked
         collapsed={collaps}
@@ -67,7 +69,7 @@ export default function UserMain() {
           left: 0,
           top: 0,
           bottom: 0,
-          zIndex: 10000,backgroundColor:"#0289cc"
+          zIndex: 10000, backgroundColor: "#0289cc"
         }}
       >
         <div className="logo" style={{ margin: "16px", textAlign: "center" }}>
@@ -85,16 +87,16 @@ export default function UserMain() {
           )}
         </div>
         <Menu
-         className="custom-menu" 
-         style={{
-          backgroundColor: '#0289cc', // Background color for the menu
-        }}
+          className="custom-menu"
+          style={{
+            backgroundColor: '#0289cc', // Background color for the menu
+          }}
           mode="inline"
           selectedKeys={[selectedKey]}
           onSelect={handleMenuSelect}
 
         >
-          <Menu.Item  key="parcel/storage" icon={<DropboxOutlined />}>
+          <Menu.Item key="parcel/storage" icon={<DropboxOutlined />}>
             ამანათები
           </Menu.Item>
           <Menu.Item key="address" icon={<EnvironmentOutlined />}>

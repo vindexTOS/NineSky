@@ -16,6 +16,9 @@ import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import Guard from './Guard';
 import MainPageGuard from './Guards/MainPageGuard';
+import ExcelUploadPage from './pages/Admin/ExcelUploadPage';
+import AdminAuthGuard from './Guards/AdminGuard';
+import UsersManagment from './pages/Admin/UsersManagment';
 
 
 const NotFound = () => <h1>404 - Not Found</h1>;
@@ -43,8 +46,12 @@ function App() {
   <Route path="settings" element={<Settings />} />
         </Route>
 {/* admin */}
+
  <Route path='/admin' element={<AdminLogin/>} />
- <Route path='/admin-dashboard' element={<AdminDashboard/>} />
+ <Route path='/admin-dashboard' element={<AdminAuthGuard><AdminDashboard/></AdminAuthGuard>}  > 
+ <Route path="excel-upload" element={<ExcelUploadPage/>} />
+ <Route  path="user-managment"  element={<UsersManagment/>}/>
+ </Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>
