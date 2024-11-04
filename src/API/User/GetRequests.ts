@@ -20,8 +20,8 @@ export const GetUserInfo = async (id: string) => {
 
 export const GetAllUsers = async (searchTerm:string, page:number = 1 , limit:number = 10)=>{
 
-     try {
-         const res:any = await ApiManager(`/admin/get-users?searchTerm=${searchTerm}&page=${page}&limit=${limit}` ,{
+     try { 
+         const res:any = await ApiManager(`/admin/get-users?personalNumber=${searchTerm}&page=${page}&limit=${limit}` ,{
 
             method:"GET"
          })

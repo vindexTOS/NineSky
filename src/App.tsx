@@ -49,8 +49,8 @@ function App() {
 
  <Route path='/admin' element={<AdminLogin/>} />
  <Route path='/admin-dashboard' element={<AdminAuthGuard><AdminDashboard/></AdminAuthGuard>}  > 
- <Route path="excel-upload" element={<ExcelUploadPage/>} />
- <Route  path="user-managment"  element={<UsersManagment/>}/>
+ <Route path="excel-upload" element={<AdminAuthGuard><ExcelUploadPage/></AdminAuthGuard>} />
+ <Route  path="user-managment"  element={<AdminAuthGuard><UsersManagment/></AdminAuthGuard>}/>
  </Route>
 
         <Route path="*" element={<NotFound />} />

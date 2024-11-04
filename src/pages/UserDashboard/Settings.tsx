@@ -96,48 +96,97 @@ const Settings: React.FC = () => {
 
 
   return (
-    <div className="p-6 pt-20">
-      <h2 className="text-2xl mb-4">მომხმარებლის პარამეტრები</h2> {/* User Settings */}
-      <Form form={form} layout="vertical" onFinish={handleFinish}>
-        <ErrorModal error={mutation?.error && mutation.error?.message || ""  } />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        
-          <Form.Item name="first_name" label="სახელი" rules={[{ required: true, min: 2, max: 30 }]}>
-            <Input />
+    <div className="p-10 pt-24   to-blue-100 min-h-screen">
+    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-2xl p-10">
+      <h2 className="text-4xl font-bold mb-10 text-center text-blue-800">მომხმარებლის პარამეტრები</h2>
+      <Form form={form} layout="vertical" onFinish={handleFinish} className="space-y-6">
+        <ErrorModal error={(mutation?.error && mutation.error?.message) || ''} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Form.Item
+            name="first_name"
+            label="სახელი"
+            rules={[{ required: true, min: 2, max: 30 }]}
+            className="w-full"
+          >
+            <Input className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
           </Form.Item>
-          <Form.Item name="last_name" label="გვარი" rules={[{ required: true, min: 2, max: 30 }]}>
-            <Input />
+          <Form.Item
+            name="last_name"
+            label="გვარი"
+            rules={[{ required: true, min: 2, max: 30 }]}
+            className="w-full"
+          >
+            <Input className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
           </Form.Item>
-          <Form.Item name="email" label="ელ. ფოსტა" rules={[{ required: true, type: 'email' }]}>
-            <Input />
+          <Form.Item
+            name="email"
+            label="ელ. ფოსტა"
+            rules={[{ required: true, type: 'email' }]}
+            className="w-full"
+          >
+            <Input className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
           </Form.Item>
-          <Form.Item name="phone_number" label="ტელეფონის ნომერი" rules={[{ required: true }]}>
-            <Input />
+          <Form.Item
+            name="phone_number"
+            label="ტელეფონის ნომერი"
+            rules={[{ required: true }]}
+            className="w-full"
+          >
+            <Input className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
           </Form.Item>
-          <Form.Item name="personal_number" label="პირადი ნომერი" rules={[{ required: true }]}>
-            <Input />
+          <Form.Item
+            name="personal_number"
+            label="პირადი ნომერი"
+            rules={[{ required: true }]}
+            className="w-full"
+          >
+            <Input className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
           </Form.Item>
-          <Form.Item label="Office" name="office" rules={[{ required: true, message: 'Please select an office!' }]}>
-            <Select placeholder="Select an office">
+          <Form.Item
+            label="Office"
+            name="office"
+            rules={[{ required: true, message: 'Please select an office!' }]}
+            className="w-full"
+          >
+            <Select
+              placeholder="Select an office"
+              className="border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+            >
               <Option value="office1">Office 1</Option>
               <Option value="office2">Office 2</Option>
               <Option value="office3">Office 3</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="city" label="ქალაქი" rules={[{ required: true }]}>
-            <Input />
+          <Form.Item
+            name="city"
+            label="ქალაქი"
+            rules={[{ required: true }]}
+            className="w-full"
+          >
+            <Input className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
           </Form.Item>
-          <Form.Item name="address" label="მისამართი" rules={[{ required: true }]}>
-            <Input />
+          <Form.Item
+            name="address"
+            label="მისამართი"
+            rules={[{ required: true }]}
+            className="w-full"
+          >
+            <Input className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
           </Form.Item>
         </div>
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={mutation.isPending}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={mutation.isPending}
+            className="w-full py-4 text-xl bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50"
+          >
             ცვლილებების შენახვა {/* Save Changes */}
           </Button>
         </Form.Item>
       </Form>
     </div>
+  </div>
 
   );
 };

@@ -63,7 +63,7 @@ useEffect(() => {
       <Avatar  className="md:flex hidden" size="large" icon={<UserOutlined />} />
       <div className="flex flex-col">
         <h1 className="text-white   font-semibold md:text-lg  text-[10px]">{userInfo.username}</h1>
-        <h1 className="text-red-500 md:text-sm  text-[12px]">ID: {userInfo.sub.slice(0,6)}</h1>
+        <h1 className="text-red-500 md:text-sm  text-[12px]">ID: {userInfo.sub}</h1>
 
       </div>
       {/* <Button

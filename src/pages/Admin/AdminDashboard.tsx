@@ -69,7 +69,7 @@ export default function AdminDashboard() {
             Users
           </Menu.Item> 
           <Menu.Item key="excel-upload" icon={<FileOutlined />}>
-           Upload Excel
+          Upload Parcel
           </Menu.Item>
           {/* Add more menu items here */}
         </Menu>

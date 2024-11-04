@@ -3,7 +3,7 @@ import { Form, Input, Button, Typography, Card } from 'antd';
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are included
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { adminAuth } from '../../API/Auth/Auth';
+import {  LoginPostRequest } from '../../API/Auth/Auth';
 import { LoginType } from '../../types/authTypes';
 
 const { Title } = Typography;
@@ -14,7 +14,7 @@ export default function AdminLogin() {
 
     const mutation = useMutation({
       mutationFn: (body: LoginType) => {
-        return adminAuth(body)
+        return LoginPostRequest (body)
       },onError(err){
          console.log(err)
       },
