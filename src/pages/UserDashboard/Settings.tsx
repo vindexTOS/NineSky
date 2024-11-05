@@ -29,6 +29,7 @@ const Settings: React.FC = () => {
     const decode = async () => {
       let token = await cookies.get("token")
       setToken(token)
+
       let decodedUser = await jwt_decode(token)
       console.log(decodedUser)
       setUserInfo(decodedUser)
@@ -40,13 +41,13 @@ const Settings: React.FC = () => {
 
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ["user-info", userInfo ? userInfo.sub : null],
-    queryFn: () => userInfo ? GetUserInfo(userInfo.sub) : Promise.resolve(),
+    queryKey: ["user-info", userInfo ? userInfo.userId: null],
+    queryFn: () => userInfo ? GetUserInfo(userInfo.userId) : Promise.resolve(),
     enabled: !!userInfo
   });
   const mutation = useMutation({
     mutationFn: (body: RegisterType) => {
-      return UpdateUserInfo(userInfo.sub, token, body)
+      return UpdateUserInfo(userInfo.userId, token, body)
     },
     onSuccess: () => {
       message.success("განახლება წარმატებით განხორციელდა");

@@ -32,9 +32,9 @@ decodeCookie()
 // });
 
 useEffect(() => {
-  if (decodedUser && decodedUser.sub) {
+  if (decodedUser && decodedUser.userId) {
     const f = async ()=>{
-      const data: any =  await GetUserInfo(decodedUser.sub);
+      const data: any =  await GetUserInfo(decodedUser.userId);
       setUserInfo({...decodedUser, ...data?.data});
  
     }
@@ -63,7 +63,7 @@ useEffect(() => {
       <Avatar  className="md:flex hidden" size="large" icon={<UserOutlined />} />
       <div className="flex flex-col">
         <h1 className="text-white   font-semibold md:text-lg  text-[10px]">{userInfo.username}</h1>
-        <h1 className="text-red-500 md:text-sm  text-[12px]">ID: {userInfo.sub}</h1>
+        <h1 className="text-red-500 md:text-sm  text-[12px]">ID: {userInfo.userId}</h1>
 
       </div>
       {/* <Button

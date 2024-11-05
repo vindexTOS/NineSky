@@ -23,9 +23,9 @@ export default function Address() {
   }, []);
 
   useEffect(() => {
-    if (decodedUser && decodedUser.sub) {
+    if (decodedUser && decodedUser.userId) {
       const fetchData = async () => {
-        const data: any = await GetUserInfo(decodedUser.sub);
+        const data: any = await GetUserInfo(decodedUser.userId);
         setUserInfo({ ...decodedUser, ...data?.data });
       };
       fetchData();
@@ -41,7 +41,7 @@ export default function Address() {
           'Province': 'GuangDong Province / 广东省',
           'City': 'Guangzhou City / 广州',
           'Street': 'Liuhua Street / 流花街',
-          'Address': `${userInfo.sub}/广州市越秀区站前路/${userInfo.sub}//195号广安服装城首层A16`,
+          'Address': `${userInfo.userId}/广州市越秀区站前路/${userInfo.userId}//195号广安服装城首层A16`,
           'TEL': '18124204729',
           'ZIP': '510010'
         },
@@ -51,7 +51,7 @@ export default function Address() {
           'Province': 'Trabzon',
           'District': 'Ortahisar',
           'Street': 'Liuhua Street / 流花街',
-          'Address': `${userInfo.sub} PELİTLİ ŞELALE SOKAK DOĞUKAN KUAFÖR ${userInfo.sub}`,
+          'Address': `${userInfo.userId} PELİTLİ ŞELALE SOKAK DOĞUKAN KUAFÖR ${userInfo.userId}`,
           'TEL': '559131313',
           'ZIP': '19711'
         }
