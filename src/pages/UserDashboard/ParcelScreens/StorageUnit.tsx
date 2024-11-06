@@ -9,7 +9,7 @@ import Cookies from 'universal-cookie';
 
 export default function StorageUnit() {
   const [userInfo, setUserInfo] = useState<any>()
-  const [StorageData,setStorageData] = useState()
+  const [StorageData,setStorageData] = useState([])
   const cookies = new Cookies()
   useEffect(() => {
 
@@ -32,13 +32,17 @@ export default function StorageUnit() {
     enabled: !!userInfo
   });
       useEffect(()=>{
-        console.log(data)
+        if(data && data?.data ){
+          console.log(data.data.parcels)
+  let newData = data.data.parcels.filter((val:any) => val.shipping_status == "brought")
+  setStorageData (newData)
+        }
       },[data ])
    
      return (
      
        
-       <ParcelsTable data={FakeParcldata}   color={'#579cff'}   title={'საწყობი'} />
+       <ParcelsTable data={StorageData}   color={'#579cff'}   title={'საწყობი'} />
  
      );
   

@@ -1,31 +1,33 @@
 import React, { FC } from 'react';
 import ParcelsCard from './ParcelsCard';
-import { FakeParcldata } from '../../assets/data/fakeJson';
- 
 
 type ParcelsPropType = { 
-      data:any 
-      color:string 
-      title:string 
+  data: any; 
+  color: string; 
+  title: string; 
 }
 
-const ParcelsTable:FC<ParcelsPropType > = ({data,color,title}) => {
+const ParcelsTable: FC<ParcelsPropType> = ({ data, color, title }) => {
   const [parcels, setParcels] = React.useState<any>([]);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(0);
   const pageSize = 5; // Number of parcels to display per page
+  const [transferData, setTransferData] = React.useState<any[]>([]);
 
+  // Update parcels whenever `data` changes
   React.useEffect(() => {
-    const fetchData = async () => {
-      setParcels(data);
-    };
+    setParcels(data);
+  }, [data]);
 
-    fetchData();
-  }, []);
-
-  // Calculate the current parcels to display
-  const startIndex = (currentPage - 1) * pageSize;
-  const currentParcels = parcels.slice(startIndex, startIndex + pageSize);
-  const totalPages = Math.ceil(parcels.length / pageSize);
+  // Calculate current parcels to display and total pages whenever `parcels` or `currentPage` changes
+  React.useEffect(() => {
+    if (parcels.length) {
+      const startIndex = (currentPage - 1) * pageSize;
+      const currentParcels = parcels.slice(startIndex, startIndex + pageSize);
+      setTotalPages(Math.ceil(parcels.length / pageSize));
+      setTransferData(currentParcels);
+    }
+  }, [parcels, currentPage]);
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
@@ -37,8 +39,8 @@ const ParcelsTable:FC<ParcelsPropType > = ({data,color,title}) => {
       <div className="flex flex-col gap-4">
         <h1 className="text-[1.5rem] text-gray-400">{title}</h1>
       </div>
-      {currentParcels.map((parcel: any, index: number) => (
-        <ParcelsCard key={index} parcel={parcel}  color={color} />
+      {transferData.map((parcel: any, index: number) => (
+        <ParcelsCard key={index} parcel={parcel} color={color} />
       ))}
 
       {/* Pagination Controls */}
@@ -48,7 +50,7 @@ const ParcelsTable:FC<ParcelsPropType > = ({data,color,title}) => {
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
         >
-           წინა
+          წინა
         </button>
         <span>{`Page ${currentPage} of ${totalPages}`}</span>
         <button
@@ -56,11 +58,11 @@ const ParcelsTable:FC<ParcelsPropType > = ({data,color,title}) => {
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
         >
-         შემდეგი
+          შემდეგი
         </button>
       </div>
     </div>
   );
-}
+};
 
-export default ParcelsTable
+export default ParcelsTable;
