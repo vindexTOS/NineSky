@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from 'antd';
 import axios from 'axios';
-import { envirement } from '../../envirement/env';
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
+
 export default function ParcelsCard({ parcel, color }: { parcel: any, color: string }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -26,7 +24,6 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
   };
 
   const handleUpload = async () => {
-    const token = cookies.get("token");
     if (selectedFile) {
       const formData = new FormData();
       formData.append('tracking_id', parcel.tracking_id);
@@ -37,10 +34,9 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
       formData.append('file', selectedFile);
 
       try {
-        await axios.post(envirement.baseUrl +'user/declarate-parcel', formData, {
+        await axios.post('/declarate-parcel', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
           },
         });
         console.log('File uploaded successfully');
@@ -49,6 +45,15 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
       }
     }
     closeModal();
+  };
+
+  const openDeclaration = () => {
+    // Assuming invoice_Pdf is a buffer, you would need to convert it to a URL
+    if (parcel.declaration && parcel.declaration.invoice_Pdf) {
+      const blob = new Blob([new Uint8Array(parcel.declaration.invoice_Pdf.data)], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      window.open(url);
+    }
   };
 
   return (
@@ -71,10 +76,6 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
           <div className="flex items-center">
             <span className="font-medium mr-1">ინვოისი:</span>
             <span>{parcel.invoice ?? 'INV123'}</span> {/* Hardcoded value if not available */}
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium mr-1">დეკლარაცია:</span>
-            <span>{parcel.declaration ?? 'DEC123'}</span> {/* Hardcoded value if not available */}
           </div>
         </div>
       </div>
@@ -99,12 +100,21 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
             <span>{parcel.shipping_status ?? 'N/A'}</span> {/* Changed 'takeOutPrice' to 'shipping_status' for consistency */}
           </div>
           <div className="flex items-center">
-            <button
-              className="ml-2 bg-green-500 text-white px-2 py-2 rounded hover:bg-blue-600"
-              onClick={openModal}
-            >
-              დეკლარაცია
-            </button>
+            {parcel.declaration ? (
+              <button
+                className="ml-2 bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-700"
+                onClick={openDeclaration}
+              >
+               აქტიური დეკლარაცია
+              </button>
+            ) : (
+              <button
+                className="ml-2 bg-green-500 text-white px-2 py-2 rounded hover:bg-blue-600"
+                onClick={openModal}
+              >
+                დეკლარაცია
+              </button>
+            )}
           </div>
         </div>
       </div>
