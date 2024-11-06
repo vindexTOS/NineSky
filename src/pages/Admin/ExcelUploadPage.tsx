@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { CreateParcles, GetParcels, UpdateParcels } from '../../API/Admin/CreateParcels';
 import Loading from '../../components/status/Loading';
@@ -67,7 +67,9 @@ export default function ExcelUploadPage() {
     setIsModalOpen(true);
     setSelectedParcel(null);
   };
-
+useEffect(()=>{
+console.log(parcelsData)
+},[parcelsData])
   const handleCancel =  async ( ) => {
 
   
@@ -102,6 +104,14 @@ export default function ExcelUploadPage() {
     setCurrentPage(page);
   };
 
+  const handleOpenDeclaration = (parcel: any) => {
+    if (parcel.declaration && parcel.declaration.invoice_Pdf) {
+      const blob = new Blob([new Uint8Array(parcel.declaration.invoice_Pdf.data)], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      window.open(url);
+    }
+  };
+
   const columns = [
     { title: 'Tracking ID', dataIndex: 'tracking_id', key: 'tracking_id' },
     { title: 'Flight ID', dataIndex: 'flight_id', key: 'flight_id' },
@@ -109,9 +119,19 @@ export default function ExcelUploadPage() {
     { title: 'Arrived At', dataIndex: 'arrived_at', key: 'arrived_at' },
     { title: 'Weight', dataIndex: 'weight', key: 'weight' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
-    // { title: 'Owner', key: 'ownerId', render: (_: any, parcel: any) => (
-    //   // <span>{parcel.owner.first_name} {parcel.owner.last_name}</span>
-    // )},
+    {
+      title: 'Declaration',
+      key: 'declaration',
+      render: (_: any, parcel: any) => (
+        parcel.declaration ? (
+          <Button type="link" onClick={() => handleOpenDeclaration(parcel)}>
+            View Declaration
+          </Button>
+        ) : (
+          <span>No Declaration</span>
+        )
+      ),
+    },
     {
       title: 'Action',
       key: 'action',
@@ -176,7 +196,7 @@ export default function ExcelUploadPage() {
           title={selectedParcel ? 'Edit Parcel' : 'Add Parcel Manually'}
           open={isModalOpen}
           onCancel={ handleCancel }
-           
+          
           footer={null}
         >
           <Form form={form} layout="vertical" onFinish={ handleFinish }>
