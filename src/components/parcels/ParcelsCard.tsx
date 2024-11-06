@@ -1,6 +1,56 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import { Modal, Button, Input } from 'antd';
+import axios from 'axios';
+import { envirement } from '../../envirement/env';
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 export default function ParcelsCard({ parcel, color }: { parcel: any, color: string }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [type, setType] = useState('');
+  const [website, setWebsite] = useState('');
+  const [comment, setComment] = useState('');
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    const token = cookies.get("token");
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('tracking_id', parcel.tracking_id);
+      formData.append('price', parcel.price);
+      formData.append('type', type);
+      formData.append('website', website);
+      formData.append('comment', comment);
+      formData.append('file', selectedFile);
+
+      try {
+        await axios.post(envirement.baseUrl +'user/declarate-parcel', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('File uploaded successfully');
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+    }
+    closeModal();
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg mb-4 overflow-hidden">
       {/* Upper Part */}
@@ -8,7 +58,7 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
         <div className="flex flex-wrap justify-between text-[1rem]">
           <div className="flex items-center">
             <span className="font-medium mr-1">რეისი:</span>
-            <span>{parcel.flight_id ?? 'FL12s34'}</span> {/* Updated from 'race' to 'flight_id' */}
+            <span>{parcel.flight_id ?? 'FL1234'}</span> {/* Updated from 'race' to 'flight_id' */}
           </div>
           <div className="flex items-center">
             <span className="font-medium mr-1">რაოდენობა:</span>
@@ -46,15 +96,56 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
           </div>
           <div className="flex items-center">
             <span className="font-medium mr-1">ჩამოტანა:</span>
-            <span>{parcel.takeOutPrice ?? 'N/A'}</span> {/* Hardcoded value if not available */}
+            <span>{parcel.shipping_status ?? 'N/A'}</span> {/* Changed 'takeOutPrice' to 'shipping_status' for consistency */}
           </div>
           <div className="flex items-center">
-            <button className="ml-2 bg-green-500 text-white px-2 py-2 rounded hover:bg-blue-600">
+            <button
+              className="ml-2 bg-green-500 text-white px-2 py-2 rounded hover:bg-blue-600"
+              onClick={openModal}
+            >
               დეკლარაცია
             </button>
           </div>
         </div>
       </div>
+
+      {/* Modal for Uploading Declaration */}
+      <Modal visible={isModalOpen} onCancel={closeModal} footer={null} title="Upload Declaration">
+        <h2 className="text-xl mb-4">Upload Declaration (PDF)</h2>
+        <div className="mb-4">
+          <Input
+            placeholder="Type (e.g., Technological)"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="mb-2"
+          />
+          <Input
+            placeholder="Website (e.g., Taobao, eBay)"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            className="mb-2"
+          />
+          <Input.TextArea
+            placeholder="Comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="mb-2"
+          />
+          <input type="file" accept="application/pdf" onChange={handleFileChange} />
+        </div>
+        <div className="flex justify-end gap-4 mt-4">
+          <Button className="bg-gray-400 text-white" onClick={closeModal}>
+            Cancel
+          </Button>
+          <Button
+            className="bg-blue-500 text-white hover:bg-blue-600"
+            type="primary"
+            onClick={handleUpload}
+          >
+            Upload
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
