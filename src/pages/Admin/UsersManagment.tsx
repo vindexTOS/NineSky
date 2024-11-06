@@ -4,8 +4,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { GetAllUsers } from '../../API/User/GetRequests';
 import Loading from '../../components/status/Loading';
 import { RegisterType } from '../../types/authTypes';
-import { UpdateUserInfo } from '../../API/User/UpdateRequest';
-
+import { UpdateUserInfo } from '../../API/Admin/UpdateUser';
+ 
 export default function UsersManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +39,7 @@ export default function UsersManagement() {
 
   const mutation = useMutation({
     mutationFn: (body: any) => {
-      return UpdateUserInfo(body.id, 'token', body);
+      return UpdateUserInfo(  body);
     },
     onSuccess: () => {
       message.success('განახლება წარმატებით განხორციელდა');

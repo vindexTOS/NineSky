@@ -80,9 +80,9 @@ export default function ExcelUploadPage() {
       tracking_id: values.tracking_id ? Number(values.tracking_id) : undefined,
       flight_id: values.flight_id ? Number(values.flight_id) : undefined,
       arrived_at: values.arrived_at  ,
-      weight: values.weight ? Number(values.weight) : undefined,
-      vol_weight: values.vol_weight ? Number(values.vol_weight) : undefined,
-      price: values.price ? Number(values.price) : undefined,
+      weight: values.weight ? String(values.weight) : undefined,
+       price: values.price ? Number(values.price) : undefined,
+       ownerId:values.ownerId ? Number(values.ownerId) : undefined
     };
 
     if (selectedParcel) {
@@ -109,9 +109,9 @@ export default function ExcelUploadPage() {
     { title: 'Arrived At', dataIndex: 'arrived_at', key: 'arrived_at' },
     { title: 'Weight', dataIndex: 'weight', key: 'weight' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
-    { title: 'Owner', key: 'owner', render: (_: any, parcel: any) => (
-      <span>{parcel.owner.first_name} {parcel.owner.last_name}</span>
-    )},
+    // { title: 'Owner', key: 'ownerId', render: (_: any, parcel: any) => (
+    //   // <span>{parcel.owner.first_name} {parcel.owner.last_name}</span>
+    // )},
     {
       title: 'Action',
       key: 'action',
@@ -198,9 +198,9 @@ export default function ExcelUploadPage() {
             <Form.Item label="Weight" name="weight">
               <Input type="number" />
             </Form.Item>
-            <Form.Item label="Vol Weight" name="vol_weight">
+            {/* <Form.Item label="Vol Weight" name="vol_weight">
               <Input type="number" />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="Price" name="price">
               <Input type="number" />
             </Form.Item>

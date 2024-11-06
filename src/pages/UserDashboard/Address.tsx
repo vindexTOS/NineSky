@@ -25,7 +25,7 @@ export default function Address() {
   useEffect(() => {
     if (decodedUser && decodedUser.userId) {
       const fetchData = async () => {
-        const data: any = await GetUserInfo(decodedUser.userId);
+        const data: any = await GetUserInfo( );
         setUserInfo({ ...decodedUser, ...data?.data });
       };
       fetchData();

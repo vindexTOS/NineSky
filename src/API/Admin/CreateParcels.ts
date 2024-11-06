@@ -23,10 +23,11 @@ export const CreateParcles = async (body: any) => {
 
 export const UpdateParcels = async ( body:any)=>{
     console.log(body)
- 
+   const id  = body.tracking_id
+  delete body.tracking_id 
     try {
         const token = cookies.get("token");
-        const res: any = await ApiManager(`admin/${body.tracking_id}`, {
+        const res: any = await ApiManager(`admin/update-parcel/${id}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,

@@ -46,8 +46,8 @@ const Settings: React.FC = () => {
     enabled: !!userInfo
   });
   const mutation = useMutation({
-    mutationFn: (body: RegisterType) => {
-      return UpdateUserInfo(userInfo.userId, token, body)
+    mutationFn: (body: any) => {
+      return UpdateUserInfo(  body)
     },
     onSuccess: () => {
       message.success("განახლება წარმატებით განხორციელდა");

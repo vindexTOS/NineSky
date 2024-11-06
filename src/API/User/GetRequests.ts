@@ -3,7 +3,7 @@ import { ApiManager } from "../ApiManager";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
-export const GetUserInfo = async (id: string) => {
+export const GetUserInfo = async ( ) => {
     const token = cookies.get("token");
 
 

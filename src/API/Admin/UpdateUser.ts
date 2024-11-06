@@ -1,4 +1,4 @@
-import { RegisterType } from "../../types/authTypes";
+
 import { ApiManager } from "../ApiManager";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
@@ -10,8 +10,8 @@ export const UpdateUserInfo = async (body: any) => {
 
 
     try {
-        const res: any = await ApiManager(`user/update`, {
-            method: "POST",
+        const res: any = await ApiManager(`admin/update-user/${body.id}`, {
+            method: "PUT",
             data: body,
             headers: {
                 Authorization: `Bearer ${token}`,
