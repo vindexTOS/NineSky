@@ -48,7 +48,7 @@ export default function RegistrationForm() {
   // };
   const onFinish = async (values:RegisterType) => {
       
-     await mutation.mutateAsync({...values, name:values.first_name})
+     await mutation.mutateAsync({...values })
   };
 
   const {isPending, error ,isError} = mutation

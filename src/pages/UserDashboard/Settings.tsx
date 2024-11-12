@@ -41,8 +41,8 @@ const Settings: React.FC = () => {
 
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ["user-info", userInfo ? userInfo.userId: null],
-    queryFn: () => userInfo ? GetUserInfo(userInfo.userId) : Promise.resolve(),
+    queryKey: ["user-info", userInfo ? userInfo.sub: null],
+    queryFn: () => userInfo ? GetUserInfo( ) : Promise.resolve(),
     enabled: !!userInfo
   });
   const mutation = useMutation({
@@ -68,17 +68,18 @@ const Settings: React.FC = () => {
    
 
   useEffect(() => {
+    console.log(data)
     if (data) {
       form.setFieldsValue({
       
-        first_name: data.data.first_name,
-        last_name: data.data.last_name,
-        email: data.data.email,
-        phone_number: String(data.data.phone_number),
-        personal_number: String(data.data.personal_number),
-        office: data.data.office,
-        city: data.data.city,
-        address: data.data.address,
+        first_name: data.data.userDetails.first_name,
+        last_name: data.data.userDetails.last_name,
+        email: userInfo.email,
+        phone_number: Number(data.data.userDetails.phone_number),
+        personal_number: String(data.data.userDetails.personal_number),
+        office: data.data.userDetails.office,
+        city: data.data.userDetails.city,
+        address: data.data.userDetails.address,
       });
     }
   }, [data, form]);

@@ -5,7 +5,7 @@ import { GetAllUsers } from '../../API/User/GetRequests';
 import Loading from '../../components/status/Loading';
 import { RegisterType } from '../../types/authTypes';
 import { UpdateUserInfo } from '../../API/Admin/UpdateUser';
- 
+
 export default function UsersManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,19 +13,25 @@ export default function UsersManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [form] = Form.useForm();
 
-  const { data, isPending, isError, error, refetch  } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['many-users-info', searchTerm, currentPage],
     queryFn: () => GetAllUsers(searchTerm, currentPage, 10),
   });
 
   useEffect(() => {
-    console.log(data?.data);
+    console.log(data);
   }, [data]);
 
-  const handleEdit = (user: any) => {
+  const handleEdit = (user:any) => {
     setSelectedUser(user);
     setIsModalOpen(true);
-    form.setFieldsValue(user);
+   delete user.userDetails.id
+   user.userDetails.id = user.id
+    form.setFieldsValue({
+      ...user,
+      ...user.userDetails,
+    });
+    console.log(user)
   };
 
   const handleCancel = () => {
@@ -33,44 +39,65 @@ export default function UsersManagement() {
     setSelectedUser(null);
   };
 
-  const handlePaginationChange = (page: any) => {
+  const handlePaginationChange = (page:any) => {
     setCurrentPage(page);
   };
 
   const mutation = useMutation({
-    mutationFn: (body: any) => {
-      return UpdateUserInfo(  body);
+    mutationFn: (body) => {
+  
+      return UpdateUserInfo(body);
     },
     onSuccess: () => {
       message.success('განახლება წარმატებით განხორციელდა');
       setIsModalOpen(false);
       setSelectedUser(null);
-         refetch();
+      refetch();
     },
     onError: (error) => {
       message.error(error.message || 'An error occurred!');
     },
   });
 
-  const handleFinish = (values: any) => {
-    mutation.mutate(values);
+  const handleFinish = (values:any) => {
+    console.log(values)
+  const updatedValues = {
+      ...values,
+    
+    };
+
+    updatedValues.phone_number =  Number(updatedValues.phone_number)
+    mutation.mutate(updatedValues);
   };
 
   const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
     { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
-    { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
-    { title: 'Phone Number', dataIndex: 'phone_number', key: 'phone_number' },
-    { title: 'Personal Number', dataIndex: 'personal_number', key: 'personal_number' },
-    { title: 'Office', dataIndex: 'office', key: 'office' },
-    { title: 'City', dataIndex: 'city', key: 'city' },
-    { title: 'Address', dataIndex: 'address', key: 'address' },
+    { title: 'First Name', dataIndex: ['userDetails', 'first_name'], key: 'first_name' },
+    { title: 'Last Name', dataIndex: ['userDetails', 'last_name'], key: 'last_name' },
+    { title: 'Phone Number', dataIndex: ['userDetails', 'phone_number'], key: 'phone_number' },
+    { title: 'Personal Number', dataIndex: ['userDetails', 'personal_number'], key: 'personal_number' },
+    { title: 'Office', dataIndex: ['userDetails', 'office'], key: 'office' },
+    { title: 'City', dataIndex: ['userDetails', 'city'], key: 'city' },
+    { title: 'Address', dataIndex: ['userDetails', 'address'], key: 'address' },
     { title: 'Access Level', dataIndex: 'accessLevel', key: 'accessLevel' },
+    {
+      title: 'Detales',
+      key: 'detales',
+      render: (_: any, parcel: any) => (
+        <Button
+          type="primary"
+          style={{ backgroundColor: 'green', borderColor: 'green', color: 'white' }}
+          onClick={() => handleEdit(parcel)}
+        >
+        Detales
+        </Button>
+      ),
+    },
     {
       title: 'Action',
       key: 'action',
-      render: (_: any, user: any) => (
+      render: (_:any, user:any) => (
         <Button type="primary" onClick={() => handleEdit(user)}>
           Edit
         </Button>
@@ -87,9 +114,9 @@ export default function UsersManagement() {
   }
 
   return (
-    <div className="p-10     min-h-screen">
-      <div className=" mx-auto bg-white rounded-lg   p-8">
-         <Input.Search
+    <div className="p-10 min-h-screen">
+      <div className="mx-auto bg-white rounded-lg p-8">
+        <Input.Search
           placeholder="Search users"
           onSearch={setSearchTerm}
           enterButton
@@ -98,7 +125,7 @@ export default function UsersManagement() {
         />
         <Table
           columns={columns}
-          dataSource={data?.data.users|| []}
+          dataSource={data?.data.users || []}
           loading={isPending}
           pagination={false}
           rowKey="id"
@@ -114,16 +141,14 @@ export default function UsersManagement() {
           simple
           className="text-center"
         />
-        <Modal
-          title="Edit User"
-          open={isModalOpen}
-          onCancel={handleCancel}
-          footer={null}
-        >
+        <Modal title="Edit User" open={isModalOpen} onCancel={handleCancel} footer={null}>
           {selectedUser && (
             <Form form={form} layout="vertical" onFinish={handleFinish}>
               <Form.Item label="Email" name="email">
                 <Input />
+              </Form.Item>
+              <Form.Item label="Password" name="password">
+                <Input.Password />
               </Form.Item>
               <Form.Item label="First Name" name="first_name">
                 <Input />
@@ -150,7 +175,7 @@ export default function UsersManagement() {
                 <Input type="number" />
               </Form.Item>
               <Form.Item className="hidden" label="id" name="id">
-                <Input type="number" />
+                <Input type="text" />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={mutation.isPending} className="w-full">

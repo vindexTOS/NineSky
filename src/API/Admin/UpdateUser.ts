@@ -8,9 +8,11 @@ export const UpdateUserInfo = async (body: any) => {
 
     const token = cookies.get("token");
 
+ const id = body.id 
 
-    try {
-        const res: any = await ApiManager(`admin/update-user/${body.id}`, {
+ delete body.id
+    try {   
+        const res: any = await ApiManager(`admin/update-user/${id}`, {
             method: "PUT",
             data: body,
             headers: {

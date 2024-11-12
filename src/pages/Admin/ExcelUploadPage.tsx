@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import * as XLSX from 'xlsx';
 import { CreateParcles, GetParcels, UpdateParcels } from '../../API/Admin/CreateParcels';
 import Loading from '../../components/status/Loading';
-import { Button, Modal, Form, Input, message, Table, Pagination, Upload } from 'antd';
+import { Button, Modal, Form, Input, message, Table, Pagination, Upload, Select } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
 export default function ExcelUploadPage() {
@@ -11,93 +11,128 @@ export default function ExcelUploadPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSingleParcelModalOpen, setIsSingleParcelModalOpen] = useState(false);
   const [selectedParcel, setSelectedParcel] = useState<any>(null);
   const [form] = Form.useForm();
-
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = async (event) => {
-      const binaryStr = event?.target?.result;
-      const workbook = XLSX.read(binaryStr, { type: 'binary' });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-      setData(jsonData);
-      await createMutation.mutateAsync(jsonData);
-    };
-
-    reader.readAsBinaryString(file);
-  };
-
-  const createMutation = useMutation({
-    mutationFn: (body: any) => {
-      console.log(body)
-      return CreateParcles(body);
-    },
-    onError(err) {
-      console.log(err);
-    },
-    onSuccess() {
-      
-      message.success('Parcels created successfully');
-      refetch();
-    },
-  });
-  const updateMutation = useMutation({
-    mutationFn: (body: any) => {
-      return UpdateParcels(body);  
-    },
-    onError(err) {
-      console.log(err);
-    },
-    onSuccess() {
-      message.success('Parcel updated successfully');
-      refetch();  
-      handleCancel();  
-    },
-  });
-  const { data: parcelsData, isLoading: isLoadingParcels, isError, error, refetch } = useQuery({
-    queryKey: ['parcels-info', searchTerm, currentPage],
-    queryFn: () => GetParcels(searchTerm, currentPage, 10),
-  });
+  const [singleParcelForm] = Form.useForm();
 
   const handleManualOpen = () => {
     form.resetFields();
     setIsModalOpen(true);
     setSelectedParcel(null);
   };
-useEffect(()=>{
-console.log(parcelsData)
-},[parcelsData])
-  const handleCancel =  async ( ) => {
 
-  
+  const handleSingleParcelOpen = () => {
+    singleParcelForm.resetFields();
+    setIsSingleParcelModalOpen(true);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const binaryStr = event?.target?.result;
+      const workbook = XLSX.read(binaryStr, { type: 'binary' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+      const updatedData = jsonData.map((item: any) => ({
+        ...item,
+        tracking_id: String(item.tracking_id),
+        weight:Number(item.weight)
+      }));
+      setData(updatedData);
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleUploadFinish = () => {
+    if (data.length > 0) {
+      const uploadData = {
+        flight_info: {
+          flight_id: form.getFieldValue('flight_id'),
+          flight_from: form.getFieldValue('flight_from'),
+          arrived_at: form.getFieldValue('arrived_at'),
+        },
+        parcels: data,
+      };
+      createMutation.mutate(uploadData);
+      handleCancel();
+    } else {
+      message.error('Please upload a valid Excel file with parcel data.');
+    }
+  };
+
+  const createMutation = useMutation({
+    mutationFn: (body: any) => {
+      return CreateParcles(body);
+    },
+    onError(err) {
+      console.log(err);
+    },
+    onSuccess() {
+      message.success('Parcels created successfully');
+      refetch();
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (body: any) => {
+      return UpdateParcels(body);
+    },
+    onError(err) {
+      console.log(err);
+    },
+    onSuccess() {
+      message.success('Parcel updated successfully');
+      refetch();
+      handleCancel();
+    },
+  });
+
+  const { data: parcelsData, isLoading: isLoadingParcels, isError, error, refetch } = useQuery({
+    queryKey: ['parcels-info', searchTerm, currentPage],
+    queryFn: () => GetParcels(searchTerm, currentPage, 10),
+  });
+
+  useEffect(() => {
+    console.log(parcelsData);
+  }, [parcelsData]);
+
+  const handleCancel = () => {
     setIsModalOpen(false);
     setSelectedParcel(null);
   };
+
+  const handleSingleParcelCancel = () => {
+    setIsSingleParcelModalOpen(false);
+  };
+
   const handleFinish = (values: any) => {
     const convertedValues = {
       ...values,
-      tracking_id: values.tracking_id ? Number(values.tracking_id) : undefined,
-      flight_id: values.flight_id ? Number(values.flight_id) : undefined,
-      arrived_at: values.arrived_at  ,
+      tracking_id: values.tracking_id ? values.tracking_id : undefined,
+      flight_id: values.flight_id ? values.flight_id : undefined,
+      arrived_at: values.arrived_at,
       weight: values.weight ? String(values.weight) : undefined,
-       price: values.price ? Number(values.price) : undefined,
-       ownerId:values.ownerId ? Number(values.ownerId) : undefined
+      price: values.price ? Number(values.price) : undefined,
+      ownerId: values.ownerId ? values.ownerId : undefined,
+      id: values.id,
     };
 
     if (selectedParcel) {
-      // Editing an existing parcel
       updateMutation.mutate({ ...convertedValues });
     } else {
-      const arr = []
-      arr.push(convertedValues)
- 
- 
+      const arr = [];
+      arr.push(convertedValues);
       createMutation.mutate(arr);
-      handleCancel()
+      handleCancel();
     }
+  };
+
+  const handleSingleParcelFinish = (values: any) => {
+    const arr = [];
+    arr.push(values);
+    createMutation.mutate(arr);
+    handleSingleParcelCancel();
   };
 
   const handlePaginationChange = (page: number) => {
@@ -111,27 +146,31 @@ console.log(parcelsData)
       window.open(url);
     }
   };
+  
 
+ useEffect(()=>{
+ console.log(parcelsData?.parcels)
+ },[parcelsData?.parcels])
   const columns = [
+    { title: 'id', dataIndex: 'id', key: 'id' },
     { title: 'Tracking ID', dataIndex: 'tracking_id', key: 'tracking_id' },
-    { title: 'Flight ID', dataIndex: 'flight_id', key: 'flight_id' },
-    { title: 'Flight From', dataIndex: 'flight_from', key: 'flight_from' },
-    { title: 'Arrived At', dataIndex: 'arrived_at', key: 'arrived_at' },
+    { title: 'Shipping status', dataIndex: 'shipping_status', key: 'shipping_status' },
+    { title: 'Pay Status', dataIndex: 'payment_status', key: 'payment_status' },
     { title: 'Weight', dataIndex: 'weight', key: 'weight' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
     {
       title: 'Declaration',
       key: 'declaration',
-      render: (_: any, parcel: any) => (
+      render: (_: any, parcel: any) =>
         parcel.declaration ? (
           <Button type="link" onClick={() => handleOpenDeclaration(parcel)}>
             View Declaration
           </Button>
         ) : (
           <span>No Declaration</span>
-        )
-      ),
+        ),
     },
+   
     {
       title: 'Action',
       key: 'action',
@@ -144,7 +183,6 @@ console.log(parcelsData)
   ];
 
   const handleEdit = (parcel: any) => {
-    console.log(parcel)
     setSelectedParcel(parcel);
     setIsModalOpen(true);
     form.setFieldsValue(parcel);
@@ -154,14 +192,11 @@ console.log(parcelsData)
     <div className="p-10 min-h-screen">
       <div className="mx-auto bg-white rounded-lg p-8">
         <div className="flex justify-between mb-6 flex-col">
-        <input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleFileChange}
-            className="custom-upload-input mb-4 w-full"
-          />
-          <Button type="primary" icon={<i className="fa fa-plus" />} onClick={handleManualOpen}>
-      +  ამანათის ხელით დამატება +
+          <Button type="primary" onClick={handleManualOpen}>
+            + Parcel Upload +
+          </Button>
+          <Button type="primary" onClick={handleSingleParcelOpen} className="mt-4">
+            + Add Single Parcel +
           </Button>
         </div>
         <Input.Search
@@ -195,39 +230,60 @@ console.log(parcelsData)
         <Modal
           title={selectedParcel ? 'Edit Parcel' : 'Add Parcel Manually'}
           open={isModalOpen}
-          onCancel={ handleCancel }
-          
+          onCancel={handleCancel}
           footer={null}
         >
-          <Form form={form} layout="vertical" onFinish={ handleFinish }>
-            <Form.Item label="Tracking ID" name="tracking_id">
-              <Input />
-            </Form.Item>
-        {  !selectedParcel &&  <Form.Item label="Owner ID" name="ownerId">
-              <Input />
-            </Form.Item>}
+          <Form form={form} layout="vertical" onFinish={handleUploadFinish}>
             <Form.Item label="Flight ID" name="flight_id">
               <Input />
             </Form.Item>
             <Form.Item label="Flight From" name="flight_from">
-              <Input />
+              <Select>
+                <Select.Option value="china">China</Select.Option>
+                <Select.Option value="Turkey">Turkey</Select.Option>
+              </Select>
             </Form.Item>
             <Form.Item label="Arrived At" name="arrived_at">
+              <Input />
+            </Form.Item>
+            <Upload.Dragger
+              name="file"
+              multiple={false}
+              accept=".xlsx, .xls"
+              beforeUpload={(file) => {
+                handleFileUpload(file);
+                return false;
+              }}
+              className="mb-4"
+            >
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Click or drag file to this area to upload</p>
+              <p className="ant-upload-hint">Support for a single file upload in .xlsx or .xls format.</p>
+            </Upload.Dragger>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={createMutation.isPending} className="w-full">
+                Save Parcel
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+
+        <Modal
+          title="Add Single Parcel"
+          open={isSingleParcelModalOpen}
+          onCancel={handleSingleParcelCancel}
+          footer={null}
+        >
+          <Form form={singleParcelForm} layout="vertical" onFinish={handleSingleParcelFinish}>
+            <Form.Item label="Tracking ID" name="tracking_id">
               <Input />
             </Form.Item>
             <Form.Item label="Weight" name="weight">
               <Input type="number" />
             </Form.Item>
-            {/* <Form.Item label="Vol Weight" name="vol_weight">
-              <Input type="number" />
-            </Form.Item> */}
-            <Form.Item label="Price" name="price">
-              <Input type="number" />
-            </Form.Item>
-            <Form.Item label="Shipping Status" name="shipping_status">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Payment Status" name="payment_status">
+            <Form.Item label="Owner ID" name="ownerId">
               <Input />
             </Form.Item>
             <Form.Item>

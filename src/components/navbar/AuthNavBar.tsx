@@ -34,7 +34,7 @@ decodeCookie()
 useEffect(() => {
   if (decodedUser && decodedUser.userId) {
     const f = async ()=>{
-      const data: any =  await GetUserInfo(decodedUser.userId);
+      const data: any =  await GetUserInfo(  );
       setUserInfo({...decodedUser, ...data?.data});
  
     }
@@ -46,7 +46,7 @@ useEffect(() => {
 // useEffect(()=>{
 // console.log(userInfo)
 // },[userInfo])
- if(userInfo?.first_name){
+ if(userInfo?.first_name && decodedUser.AccessLevel < 0){
 
   return (
     <nav style={{zIndex:1000}} className="md:w-full w-[100vw] bg-[#2fb9ff]    lg:px-60  fixed top-0 left-0 h-[95px] flex items-center justify-between px-10 z-100">

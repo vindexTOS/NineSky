@@ -23,9 +23,12 @@ export default function Address() {
   }, []);
 
   useEffect(() => {
-    if (decodedUser && decodedUser.userId) {
+    console.log(decodedUser)
+
+    if (decodedUser && decodedUser.sub) {
       const fetchData = async () => {
         const data: any = await GetUserInfo( );
+        console.log(data)
         setUserInfo({ ...decodedUser, ...data?.data });
       };
       fetchData();
@@ -33,25 +36,26 @@ export default function Address() {
   }, [decodedUser]);
 
   useEffect(() => {
-    if (userInfo && userInfo.first_name) {
+    console.log(userInfo)
+    if (userInfo && userInfo.userDetails.first_name) {
       const addresses = {
         china: {
-          'First Name': userInfo.first_name,
-          'Last Name': userInfo.last_name,
+          'First Name': userInfo.userDetailsfirst_name,
+          'Last Name': userInfo.userDetails.last_name,
           'Province': 'GuangDong Province / 广东省',
           'City': 'Guangzhou City / 广州',
           'Street': 'Liuhua Street / 流花街',
-          'Address': `${userInfo.userId}/广州市越秀区站前路/${userInfo.userId}//195号广安服装城首层A16`,
+          'Address': `${userInfo.sub}/广州市越秀区站前路/${userInfo.sub}//195号广安服装城首层A16`,
           'TEL': '18124204729',
           'ZIP': '510010'
         },
         turkey: {
-          'First Name': userInfo.first_name,
-          'Last Name': userInfo.last_name,
+          'First Name': userInfo.userDetails.first_name,
+          'Last Name': userInfo.userDetails.last_name,
           'Province': 'Trabzon',
           'District': 'Ortahisar',
           'Street': 'Liuhua Street / 流花街',
-          'Address': `${userInfo.userId} PELİTLİ ŞELALE SOKAK DOĞUKAN KUAFÖR ${userInfo.userId}`,
+          'Address': `${userInfo.sub} PELİTLİ ŞELALE SOKAK DOĞUKAN KUAFÖR ${userInfo.sub}`,
           'TEL': '559131313',
           'ZIP': '19711'
         }

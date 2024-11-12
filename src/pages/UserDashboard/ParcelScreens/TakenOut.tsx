@@ -37,7 +37,7 @@ export default function TakenOut() {
   let newData = data.data.parcels.filter((val:any) => val.shipping_status == "taken")
   setStorageData (newData)
         }
-      },[data ])
+      },[data])
 
   return (
 

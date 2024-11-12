@@ -27,7 +27,7 @@ const AdminAuthGuard= ({ children }: { children: ReactNode }) => {
     return <Navigate to="/" replace />;
   }
 
- if(  decoded && decoded.level  ==  3){
+ if(  decoded && decoded.AccessLevel  ==  3){
   return <>{children}</>;
  } 
 

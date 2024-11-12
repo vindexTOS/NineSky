@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from 'antd';
 import axios from 'axios';
+import { envirement } from '../../envirement/env';
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default function ParcelsCard({ parcel, color }: { parcel: any, color: string }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -8,6 +12,7 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
   const [type, setType] = useState('');
   const [website, setWebsite] = useState('');
   const [comment, setComment] = useState('');
+  const token = cookies.get("token");
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -34,9 +39,12 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
       formData.append('file', selectedFile);
 
       try {
-        await axios.post('/declarate-parcel', formData, {
+        await axios.post(envirement.baseUrl + 'user/declarate-parcel', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+           
+              Authorization: `Bearer ${token}`,
+      
           },
         });
         console.log('File uploaded successfully');
