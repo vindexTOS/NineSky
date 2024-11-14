@@ -14,7 +14,10 @@ export default function ExcelUploadPage() {
   const [isSingleParcelModalOpen, setIsSingleParcelModalOpen] = useState(false);
   const [selectedParcel, setSelectedParcel] = useState<any>(null);
   const [form] = Form.useForm();
+  const [editForm] = Form.useForm();
+
   const [singleParcelForm] = Form.useForm();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleManualOpen = () => {
     form.resetFields();
@@ -22,10 +25,7 @@ export default function ExcelUploadPage() {
     setSelectedParcel(null);
   };
 
-  const handleSingleParcelOpen = () => {
-    singleParcelForm.resetFields();
-    setIsSingleParcelModalOpen(true);
-  };
+ 
 
   const handleFileUpload = async (file: File) => {
     const reader = new FileReader();
@@ -67,6 +67,7 @@ export default function ExcelUploadPage() {
     },
     onError(err) {
       console.log(err);
+      message.error("Something went wrong")
     },
     onSuccess() {
       message.success('Parcels created successfully');
@@ -90,7 +91,7 @@ export default function ExcelUploadPage() {
 
   const { data: parcelsData, isLoading: isLoadingParcels, isError, error, refetch } = useQuery({
     queryKey: ['parcels-info', searchTerm, currentPage],
-    queryFn: () => GetParcels(searchTerm, currentPage, 10),
+    queryFn: () => GetParcels(searchTerm, '',currentPage, 10),
   });
 
   useEffect(() => {
@@ -106,32 +107,32 @@ export default function ExcelUploadPage() {
     setIsSingleParcelModalOpen(false);
   };
 
-  const handleFinish = (values: any) => {
-    const convertedValues = {
-      ...values,
-      tracking_id: values.tracking_id ? values.tracking_id : undefined,
-      flight_id: values.flight_id ? values.flight_id : undefined,
-      arrived_at: values.arrived_at,
-      weight: values.weight ? String(values.weight) : undefined,
-      price: values.price ? Number(values.price) : undefined,
-      ownerId: values.ownerId ? values.ownerId : undefined,
-      id: values.id,
-    };
-
-    if (selectedParcel) {
-      updateMutation.mutate({ ...convertedValues });
-    } else {
-      const arr = [];
-      arr.push(convertedValues);
-      createMutation.mutate(arr);
-      handleCancel();
-    }
+  const handleSingleParcelOpen = () => {
+    singleParcelForm.resetFields();
+    setIsSingleParcelModalOpen(true);
   };
 
   const handleSingleParcelFinish = (values: any) => {
-    const arr = [];
-    arr.push(values);
-    createMutation.mutate(arr);
+    // Transform values into CreateParcelDto format
+    const newParcel    = {
+      tracking_id: values.tracking_id,
+      weight: values.weight ? Number(values.weight) : undefined,
+      ownerId: values.ownerId,
+    };
+
+    // Create the flight information for a single parcel
+    const flightInfo = {
+      flight_id: values.flight_id,
+      flight_from: values.flight_from.toLowerCase(),
+      arrived_at: values.arrived_at,
+    };
+
+    const uploadData = {
+      flight_info: flightInfo,
+      parcels: [newParcel],
+    };
+
+    createMutation.mutate(uploadData);
     handleSingleParcelCancel();
   };
 
@@ -146,8 +147,25 @@ export default function ExcelUploadPage() {
       window.open(url);
     }
   };
-  
+  const handleUpdate = (values: any) => {
+    const convertedValues = {
+      ...values,
+      tracking_id: values.tracking_id ? values.tracking_id : undefined,
+      flight_id: values.flight_id ? values.flight_id : undefined,
+      arrived_at: values.arrived_at,
+      weight: values.weight ? String(values.weight) : undefined,
+      price: values.price ? Number(values.price) : undefined,
+      ownerId: values.ownerId ? values.ownerId : undefined,
+      id: selectedParcel.id,
+    };
 
+    updateMutation.mutate(convertedValues);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditModalOpen(false);
+    setSelectedParcel(null);
+  };
  useEffect(()=>{
  console.log(parcelsData?.parcels)
  },[parcelsData?.parcels])
@@ -175,7 +193,7 @@ export default function ExcelUploadPage() {
       title: 'Action',
       key: 'action',
       render: (_: any, parcel: any) => (
-        <Button type="primary" onClick={() => handleEdit(parcel)}>
+        <Button type="primary"  onClick={() => handleEdit(parcel)}>
           Edit
         </Button>
       ),
@@ -183,20 +201,25 @@ export default function ExcelUploadPage() {
   ];
 
   const handleEdit = (parcel: any) => {
+    console.log(parcel)
     setSelectedParcel(parcel);
-    setIsModalOpen(true);
-    form.setFieldsValue(parcel);
-  };
-
+    setIsEditModalOpen(true);
+    editForm.setFieldsValue({
+      ...parcel,
+      ownerId: parcel.owner?.id || '',
+      flight_id: parcel.flight_info?.flight_id || '', // Handle flight_id from flight_info if it exists
+      flight_from: parcel.flight_info?.flight_from?.toLowerCase() || '', // Handle flight_from from flight_info
+      arrived_at: parcel.flight_info?.arrived_at || '', // Handle arrived_at from flight_info
+    });  };
   return (
     <div className="p-10 min-h-screen">
       <div className="mx-auto bg-white rounded-lg p-8">
         <div className="flex justify-between mb-6 flex-col">
           <Button type="primary" onClick={handleManualOpen}>
-            + Parcel Upload +
+            +  ექსელით შექმნა   +
           </Button>
           <Button type="primary" onClick={handleSingleParcelOpen} className="mt-4">
-            + Add Single Parcel +
+            + ერთის შექმნა +
           </Button>
         </div>
         <Input.Search
@@ -269,7 +292,85 @@ export default function ExcelUploadPage() {
             </Form.Item>
           </Form>
         </Modal>
+{/* 
+ */}
 
+<Modal
+          title="Edit Parcel"
+          open={isEditModalOpen}
+          onCancel={handleEditCancel}
+          footer={null}
+        >
+          <Form form={editForm} layout="vertical" onFinish={handleUpdate}>
+            {/* <Form.Item
+              label="Flight ID"
+              name="flight_id"
+              rules={[{ required: true, message: 'Please enter a Flight ID' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Flight From"
+              name="flight_from"
+              rules={[{ required: true, message: 'Please select a Flight From' }]}
+            >
+              <Select>
+                <Select.Option value="china">China</Select.Option>
+                <Select.Option value="turkey">Turkey</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Arrived At"
+              name="arrived_at"
+              rules={[{ required: true, message: 'Please enter Arrival Information' }]}
+            >
+              <Input />
+            </Form.Item> */}
+            <Form.Item
+              label="Tracking ID"
+              name="tracking_id"
+              rules={[{ required: true, message: 'Please enter a Tracking ID' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item label="Weight" name="weight">
+              <Input type="number" />
+            </Form.Item>
+            <Form.Item
+              label="Owner ID"
+              name="ownerId"
+              rules={[{ required: true, message: 'Please enter an Owner ID' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item label="Price" name="price">
+              <Input type="number" />
+            </Form.Item>
+            <Form.Item
+              label="Shipping Status"
+              name="shipping_status"
+              rules={[{ required: true, message: 'Please enter a Shipping Status' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Payment Status"
+              name="payment_status"
+              rules={[{ required: true, message: 'Please enter a Payment Status' }]}
+            >
+              <Select>
+                <Select.Option value="PAID">PAID</Select.Option>
+                <Select.Option value="UNPAID">UNPAID</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={updateMutation.isPending} className="w-full">
+                Update Parcel
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+      {/*  */}
         <Modal
           title="Add Single Parcel"
           open={isSingleParcelModalOpen}
@@ -277,13 +378,45 @@ export default function ExcelUploadPage() {
           footer={null}
         >
           <Form form={singleParcelForm} layout="vertical" onFinish={handleSingleParcelFinish}>
-            <Form.Item label="Tracking ID" name="tracking_id">
+            <Form.Item
+              label="Flight ID"
+              name="flight_id"
+              rules={[{ required: true, message: 'Please enter a Flight ID' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Flight From"
+              name="flight_from"
+              rules={[{ required: true, message: 'Please select a Flight From' }]}
+            >
+              <Select>
+                <Select.Option value="china">China</Select.Option>
+                <Select.Option value="turkey">Turkey</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Arrived At"
+              name="arrived_at"
+              rules={[{ required: true, message: 'Please enter Arrival Information' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Tracking ID"
+              name="tracking_id"
+              rules={[{ required: true, message: 'Please enter a Tracking ID' }]}
+            >
               <Input />
             </Form.Item>
             <Form.Item label="Weight" name="weight">
               <Input type="number" />
             </Form.Item>
-            <Form.Item label="Owner ID" name="ownerId">
+            <Form.Item
+              label="Owner ID"
+              name="ownerId"
+              rules={[{ required: true, message: 'Please enter an Owner ID' }]}
+            >
               <Input />
             </Form.Item>
             <Form.Item>

@@ -7,12 +7,17 @@ import { useMutation } from '@tanstack/react-query';
 import { RegisterType } from '../../../types/authTypes';
 import { RegisterPostRequest } from '../../../API/Auth/Auth';
 import Loading from '../../status/Loading';
-import { useNavigate } from 'react-router-dom';
- import ErrorModal from '../../status/Error';
+import { Link, useNavigate } from 'react-router-dom';
+import ErrorModal from '../../status/Error';
+import Terms from '../../../pages/TermsAndServices/Terms';
 const { Option } = Select;
 
 export default function RegistrationForm() {
   const [visible, setVisible] = useState(false);
+ 
+  const [termsVisible, setTermsVisible] = useState(false);
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+
   const nav = useNavigate()
   // const [isJuridical, setIsJuridical] = useState(false);
   const mutation = useMutation({
@@ -20,7 +25,7 @@ export default function RegistrationForm() {
       return RegisterPostRequest(body);
     },
     onError(err) {
- 
+
     },
     onSuccess(suc) {
       nav("/user/parcel/storage");
@@ -30,7 +35,7 @@ export default function RegistrationForm() {
 
 
 
-  
+
   const showModal = () => {
     setVisible(true);
   };
@@ -46,14 +51,14 @@ export default function RegistrationForm() {
   // const handleSwitchChange = (checked: boolean) => {
   //   setIsJuridical(checked);
   // };
-  const onFinish = async (values:RegisterType) => {
-      
-     await mutation.mutateAsync({...values })
+  const onFinish = async (values: RegisterType) => {
+
+    await mutation.mutateAsync({ ...values })
   };
 
-  const {isPending, error ,isError} = mutation
+  const { isPending, error, isError } = mutation
 
- 
+
   return (
     <>
       <Button onClick={showModal}
@@ -89,7 +94,7 @@ export default function RegistrationForm() {
                 label="სახელი"
                 name="first_name"
                 rules={[{ required: true, message: 'გთხოვთ შეიყვანოთ თქვენი სახელი!' }]}
-              > 
+              >
                 <Input placeholder="სახელი ქართულად" prefix={<UserOutlined />} />
               </Form.Item>
 
@@ -116,19 +121,22 @@ export default function RegistrationForm() {
               >
                 <Input placeholder="Last Name in English" prefix={<UserOutlined />} />
               </Form.Item> */}
-
               <Form.Item
                 label="ID ნომერი"
                 name="personal_number"
-                rules={[{ required: true, message: 'გთხოვთ შეიყვანეთ თქვენი ID ნომერი!' }, {
-                  validator: (_, value) => {
-                    const regex = /^\d+$/; // Regular expression to check if the value contains only digits
-                    if (!value || regex.test(value)) {
-                      return Promise.resolve(); // Validation passed
-                    }
-                    return Promise.reject(new Error('ID  ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს!')); // Validation failed
+                rules={[
+                  { required: true, message: 'გთხოვთ შეიყვანეთ თქვენი ID ნომერი!' },
+                  {
+                    validator: (_, value) => {
+                      const regex = /^\d+$/; // Regular expression to check if the value contains only digits
+                      if (!value || regex.test(value)) {
+                        return Promise.resolve(); // Validation passed
+                      }
+                      return Promise.reject(new Error('ID ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს!')); // Validation failed
+                    },
                   },
-                },]}
+                  { len: 11, message: 'ID ნომერი უნდა იყოს 11 სიმბოლო!' }, // New rule for length validation
+                ]}
               >
                 <Input placeholder="ID ნომერი" prefix={<IdcardOutlined />} />
               </Form.Item>
@@ -183,12 +191,12 @@ export default function RegistrationForm() {
                 name="office"
                 rules={[{ required: true, message: 'Please select an office!' }]}
               >
-                
+
                 <Select placeholder="Select an office">
                   <Option value="office1">Office 1</Option>
                   <Option value="office2">Office 2</Option>
                   <Option value="office3">Office 3</Option>
-              
+
                 </Select>
               </Form.Item>
 
@@ -200,7 +208,7 @@ export default function RegistrationForm() {
                 <Input.Password placeholder="პაროლი" prefix={<LockOutlined />} />
               </Form.Item>
               <Loading loading={isPending} />
-               { isError &&  <ErrorModal error={error?.message  || "შეცდომა"} />}
+              {isError && <ErrorModal error={error?.message || "შეცდომა"} />}
               {/* <Form.Item
                 label="Repeat Password"
                 name="repeatPassword"
@@ -212,23 +220,50 @@ export default function RegistrationForm() {
           </div>
 
           <Form.Item
-        
             valuePropName="checked"
-            rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('გთხოვთ გაეცანით და დაეთანხხმეთ მომსახურეობის პირობებს') }]}
+            rules={[
+              {
+                validator: (_, value) =>
+                  value
+                    ? Promise.resolve()
+                    : Promise.reject('გთხოვთ გეაცანით და დაეთანხხმეთ მომსახურების პირობებს'),
+              },
+            ]}
           >
-            <Checkbox>
-              ვეთანხმები <a href="#">მომსახურების პირობებებს</a>
+            <Checkbox
+              checked={isTermsAccepted}
+              onChange={(e) => setIsTermsAccepted(e.target.checked)}
+            >
+              ვეთანხმები{' '}
+              <Link
+                to="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setTermsVisible(true);
+                }}
+              >
+                მომსახურების პირობებს
+              </Link>
             </Checkbox>
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block disabled={!isTermsAccepted}>
               რეგისტრაცია
             </Button>
           </Form.Item>
         </Form>
       </Modal>
-
+      <Modal
+        title="მომსახურების შესაში"
+        visible={termsVisible}
+        onOk={() => setTermsVisible(false)}
+        onCancel={() => setTermsVisible(false)}
+        footer={null}
+        centered
+      >
+        <Terms />
+      </Modal>
       <style jsx>{`
         .custom-modal .ant-modal {
           backdrop-filter: blur(10px); /* Apply blur effect to background */

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Menu, Breadcrumb } from 'antd';
-import { MenuOutlined, HomeOutlined, UserOutlined, FileOutlined, LogoutOutlined } from '@ant-design/icons';
+import { MenuOutlined, HomeOutlined, UserOutlined, FileOutlined, LogoutOutlined, DollarCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are included
 import { Outlet, useNavigate } from 'react-router-dom';
 import Cookies from "universal-cookie"
@@ -78,10 +78,13 @@ const cookies = new Cookies
           <Menu.Item key="excel-upload" icon={<FileOutlined />}>
           Upload Parcel
           </Menu.Item>
-
+          <Menu.Item key="price-managment" icon={<DollarCircleOutlined />}>
+            ფასის მენეჯმენტი
+          </Menu.Item>
           <Menu.Item key="logout" icon={<LogoutOutlined />}>
             გამოსვლა
           </Menu.Item>
+      
           {/* Add more menu items here */}
         </Menu>
       </Sider>

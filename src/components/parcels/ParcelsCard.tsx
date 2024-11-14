@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Input } from 'antd';
+import { Modal, Button, Input, message } from 'antd';
 import axios from 'axios';
 import { envirement } from '../../envirement/env';
 import Cookies from "universal-cookie";
@@ -47,8 +47,10 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
       
           },
         });
-        console.log('File uploaded successfully');
+         message.success("დეკლერაცია აიტვირთა წარმატებით")
       } catch (error) {
+        const err:any = error
+        message.error(err.message)
         console.error('Error uploading file:', error);
       }
     }

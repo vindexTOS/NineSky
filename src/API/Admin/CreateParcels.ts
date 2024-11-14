@@ -43,10 +43,10 @@ export const UpdateParcels = async ( body:any)=>{
 
 }
  
-export const GetParcels  = async (searchTerm: string, page: number, limit: number) => {
+export const GetParcels  = async (searchTerm: string, ownerId:string  ,page: number, limit: number) => {
     try {
       const token = cookies.get("token");
-      const res: any = await ApiManager(`admin/get-parcels?tracking_id=${searchTerm}&page=${page}&limit=${limit}`, {
+      const res: any = await ApiManager(`admin/get-parcels?tracking_id=${searchTerm}&ownerId=${ownerId}&page=${page}&limit=${limit}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

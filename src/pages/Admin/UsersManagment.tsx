@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Button, Modal, Form, Input, message } from 'antd';
+import { Table, Pagination, Button, Modal, Form, Input, message, Select } from 'antd';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { GetAllUsers } from '../../API/User/GetRequests';
 import Loading from '../../components/status/Loading';
 import { RegisterType } from '../../types/authTypes';
 import { UpdateUserInfo } from '../../API/Admin/UpdateUser';
-
+import { GetParcels, UpdateParcels } from '../../API/Admin/CreateParcels';
+import {ShippingStatus} from "../../types/shipping_status"
 export default function UsersManagement() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [modalCurrentPage, setModalCurrentPage] = useState(1);
+  const [selectedUserId, setSelectedUserId] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isDetalseModalOpen, setIsDetalesModalOpen] = useState(false)
+  const [detaledUserInfo, setDetaledUserInfo] = useState<any>()
   const [form] = Form.useForm();
+
+
+
+
+  const shippingStatusOptions = Object.values(ShippingStatus).map((status) => ({
+    label: status.charAt(0).toUpperCase() + status.slice(1), // Capitalize the label
+    value: status,
+  }));
+
 
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['many-users-info', searchTerm, currentPage],
@@ -22,11 +36,36 @@ export default function UsersManagement() {
     console.log(data);
   }, [data]);
 
-  const handleEdit = (user:any) => {
+
+
+
+  const handleDetales = async (userId: string, page = 1) => {
+    setSelectedUserId(userId)
+    setIsDetalesModalOpen(true);
+    const data = await GetParcels('', userId, page, 10);
+    console.log(data)
+    setDetaledUserInfo(data);
+    setModalCurrentPage(page); // Set current page for modal pagination
+  };
+
+  // Handle modal pagination
+  const handleModalPagination = async (page: any) => {
+    console.log(selectedUser)
+    if (selectedUserId) {
+      await handleDetales(selectedUserId, page); // Fetch data for the new page
+    }
+  };
+
+  // Close the modal
+  const handleCancelDetalesModal = () => {
+    setIsDetalesModalOpen(false);
+  };
+  const handleEdit = (user: any) => {
+     console.log(user)
     setSelectedUser(user);
     setIsModalOpen(true);
-   delete user.userDetails.id
-   user.userDetails.id = user.id
+    delete user.userDetails.id
+    user.userDetails.id = user.id
     form.setFieldsValue({
       ...user,
       ...user.userDetails,
@@ -39,36 +78,103 @@ export default function UsersManagement() {
     setSelectedUser(null);
   };
 
-  const handlePaginationChange = (page:any) => {
+  const handlePaginationChange = (page: any) => {
     setCurrentPage(page);
   };
 
   const mutation = useMutation({
     mutationFn: (body) => {
-  
+
       return UpdateUserInfo(body);
     },
     onSuccess: () => {
       message.success('განახლება წარმატებით განხორციელდა');
       setIsModalOpen(false);
       setSelectedUser(null);
-      refetch();
+
     },
     onError: (error) => {
+      message.error("შეცდომა")
       message.error(error.message || 'An error occurred!');
     },
   });
 
-  const handleFinish = (values:any) => {
-    console.log(values)
-  const updatedValues = {
+  const handleFinish = (values: any) => {
+
+    const updatedValues = {
       ...values,
-    
+
     };
 
-    updatedValues.phone_number =  Number(updatedValues.phone_number)
+    updatedValues.phone_number = Number(updatedValues.phone_number)
     mutation.mutate(updatedValues);
   };
+
+  const updateMutation = useMutation({
+    mutationFn: (body: any) => {
+      return UpdateParcels(body);
+    },
+    onError(err) {
+      message.error("Somehing went wrong")
+      console.log(err);
+    },
+    onSuccess() {
+      message.success('Parcel updated successfully');
+      handleDetales(selectedUserId)
+
+       
+    },
+  });
+
+  const handleUpdate = (values: any) => {
+    const convertedValues = {
+      ...values,
+      tracking_id: values.tracking_id ? values.tracking_id : undefined,
+      flight_id: values.flight_id ? values.flight_id : undefined,
+      arrived_at: values.arrived_at,
+      weight: values.weight ? String(values.weight) : undefined,
+      price: values.price ? Number(values.price) : undefined,
+      ownerId: values.ownerId ? values.ownerId : undefined,
+      id: values.id,
+    };
+
+    updateMutation.mutate({ ...convertedValues });
+  };
+
+  const handleStatusChange = (id:any, newStatus:any) => {
+    const parcel = detaledUserInfo.parcels.find((parcel:any) => parcel.id === id);
+    if (parcel) {
+      handleUpdate({
+        ...parcel,
+        shipping_status: newStatus,
+      });
+    }
+  };
+
+  const columns2 = [
+    { title: 'ID', dataIndex: 'id', key: 'id' },
+    { title: 'Tracking ID', dataIndex: 'tracking_id', key: 'tracking_id' },
+    { title: 'Price', dataIndex: 'price', key: 'price' },
+    { title: 'Weight', dataIndex: 'weight', key: 'weight' },
+    { title: 'Payment Status', dataIndex: 'payment_status', key: 'payment_status' },
+    {
+      title: 'Shipping Status',
+      dataIndex: 'shipping_status',
+      key: 'shipping_status',
+      render: (text:any, record:any) => (
+        <Select
+          value={record.shipping_status}
+          onChange={(value) => handleStatusChange(record.id, value)}
+          options={shippingStatusOptions}
+          style={{ width: 120 }}
+        />
+      ),
+    },
+  ];
+
+
+
+
 
   const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
@@ -88,16 +194,16 @@ export default function UsersManagement() {
         <Button
           type="primary"
           style={{ backgroundColor: 'green', borderColor: 'green', color: 'white' }}
-          onClick={() => handleEdit(parcel)}
+          onClick={() => handleDetales(parcel.id)}
         >
-        Detales
+          Detales
         </Button>
       ),
     },
     {
       title: 'Action',
       key: 'action',
-      render: (_:any, user:any) => (
+      render: (_: any, user: any) => (
         <Button type="primary" onClick={() => handleEdit(user)}>
           Edit
         </Button>
@@ -125,7 +231,9 @@ export default function UsersManagement() {
         />
         <Table
           columns={columns}
-          dataSource={data?.data.users || []}
+          dataSource={data?.data.
+            parsedUser
+            || []}
           loading={isPending}
           pagination={false}
           rowKey="id"
@@ -141,6 +249,31 @@ export default function UsersManagement() {
           simple
           className="text-center"
         />
+
+<Modal
+      title="Parcel Details"
+      open={isDetalseModalOpen}
+      onCancel={handleCancelDetalesModal}
+      footer={null}
+      width={800}
+    >
+      {detaledUserInfo ? (
+        <Table
+          dataSource={detaledUserInfo.parcels}
+          rowKey="id"
+          columns={columns2}
+          pagination={false}
+        />
+      ) : (
+        <Loading loading={!detaledUserInfo} />
+      )}
+      <Pagination
+        current={modalCurrentPage}
+        total={detaledUserInfo?.totalCount ? detaledUserInfo?.totalCount : 0}
+        pageSize={10}
+        onChange={handleModalPagination}
+      />
+    </Modal>
         <Modal title="Edit User" open={isModalOpen} onCancel={handleCancel} footer={null}>
           {selectedUser && (
             <Form form={form} layout="vertical" onFinish={handleFinish}>

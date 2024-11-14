@@ -1,8 +1,23 @@
+import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
+import { GetPrice } from '../../API/Price/PriceManagment';
 
 export default function Header() {
   const [isVisible, setIsVisible] = useState(false);
+  const [prices, setPrices] = useState<any>(null);
 
+  const { data, refetch } = useQuery({
+    queryKey: ['parcels-price'],
+    queryFn: () => GetPrice(),
+  
+  });
+
+  useEffect(() => {
+    if (data?.data) {
+      console.log(data.data)
+      setPrices(data.data);
+    }
+  }, [data]);
   useEffect(() => {
     
     const timer = setTimeout(() => setIsVisible(true), 100); // Delay to ensure the page has loaded
@@ -20,17 +35,17 @@ export default function Header() {
 
     <ul className="list-disc pl-6 space-y-2">
     <li>
-      ჩინეთიდან საჰაერო გზით ტრანსპორტირება 1კგ $9.85
+      ჩინეთიდან საჰაერო გზით ტრანსპორტირება 1კგ  {prices && prices['China'] ? <p>${prices['China']}</p> : <p>'$9.85'</p> }
     </li>
-    <li>
+    {/* <li>
       ჩინეთიდან სახმელეთო გზით 1კგ $4.50
-    </li>
+    </li> */}
     <li>
-      თურქეთიდან სახმელეთო გზით ტრანსპორტირების საფასური 1კგ $3
+      თურქეთიდან სახმელეთო გზით ტრანსპორტირების საფასური 1კგ  {prices && prices['Turkey'] ? <p>${prices['Turkey']}</p> : <p>'$3'</p> }
     </li>
-    <li>
+    {/* <li>
       თურქეთიდან 19კგ ან მეტი წონის ამანათი $1.50
-    </li>
+    </li> */}
     <li>
       ჩვენი მისამართი: თბილისი, ფონიჭალა lll მ/რ, კ13
     </li>
