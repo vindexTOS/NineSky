@@ -26,7 +26,7 @@ export default function Header() {
   return (  
     <div
       style={{ zIndex: 100 }}
-      className={`bg-gradient-to-br from-[#2fb9ff]/90 to-blue-800/80 text-white shadow-lg rounded-2xl p-6 w-full md:w-[500px] max-w-[95%] items-center flex flex-col text-center transition-all duration-700 ease-in-out transform ${
+      className={`bg-gradient-to-br from-[#2fb9ff]/90 to-blue-800/80 text-white shadow-lg rounded-2xl mt-5 p-6 w-full md:w-[500px] max-w-[95%] items-center flex flex-col text-center transition-all duration-700 ease-in-out transform ${
         isVisible ? 'scale-100 opacity-100' : 'scale-90 opacity-0'
       }`}
     >

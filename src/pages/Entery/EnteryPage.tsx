@@ -1,20 +1,16 @@
 import React from "react";
-// import BackGroundImage from "../../assets/background.jpg";
-// import BackGroundImage from "../../assets/background.webp";
-// import BackGroundImage from "../../assets/whitemap.jpg";
-// import BackGroundImage from "../../assets/Darkmap.jpg";
-// import BackGroundImage from "../../assets/particleWorld.jpg";
 import BackGroundImage from "../../assets/skytwo.jpg";
 
 import Calculator from "./Calculator";
 import Header from "./Header";
-import Contacts from "./Contacts";
 import Particals from "../../components/particals/Particals";
+
 export default function EnteryPage() {
   return (
-    <main className="md:h-[100vh] pt-[5rem] md:pt-50 bg-no-repeat bg-cover bg-center entery">
+    <main className="min-h-screen pt-[5rem] bg-no-repeat bg-cover bg-center relative overflow-hidden">
+      {/* Background Image with Particles */}
       <div
-        className="w-full  md:h-[100vh] bg-no-repeat bg-center flex  items-end justify-start md:px-20"
+        className="absolute inset-0 w-full h-full bg-no-repeat bg-center mt-20"
         style={{
           backgroundImage: `url(${BackGroundImage})`,
           backgroundSize: "cover",
@@ -22,20 +18,21 @@ export default function EnteryPage() {
           backgroundRepeat: "no-repeat",
         }}
       >
-       <Particals/>
+        <Particals />
+      </div>
 
- <div   className="w-[100%] h-[90%]  items-center flex  justify-between " >
-      <div className="  w-[100%] gap-50  max_smm:items-center   max_smm:mt-10 max_smm:gap-[3rem]   justify-between flex flex-col  py-6     ">
-      
-      <Header />
-        <div className="flex  items-end justify-end  max_smm:w-[100%]   max_smm:items-center   max_smm:justify-center   py-6 gap-6   ">
-        <Calculator />
+      {/* Main Content */}
+      <div className="relative z-10 w-full h-full flex flex-col justify-between items-start p-6  max_smm1:gap-20">
+        {/* Header positioned in top-left */}
+        <div className="max-w-md md:max-w-lg lg:max-w-xl">
+          <Header />
+        </div>
+
+        {/* Calculator positioned in bottom-right */}
+        <div className="self-end mt-auto max-w-md md:max-w-lg lg:max-w-xl">
+          <Calculator />
         </div>
       </div>
-      </div>
-
-        </div> 
-  
     </main>
   );
 }
