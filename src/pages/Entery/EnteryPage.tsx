@@ -22,9 +22,9 @@ export default function EnteryPage() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full h-full flex flex-col justify-between items-start p-6  max_smm1:gap-20">
+      <div className="relative z-10  w-full h-full flex flex-col justify-between items-start p-6  max_smm1:gap-20">
         {/* Header positioned in top-left */}
-        <div className="max-w-md md:max-w-lg lg:max-w-xl">
+        <div className="max-w-md md:max-w-lg lg:max-w-xl xl:ml-20 xl:mt-5">
           <Header />
         </div>
 
