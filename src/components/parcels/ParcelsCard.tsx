@@ -14,6 +14,7 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
   const [comment, setComment] = useState('');
   const token = cookies.get("token");
 
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -31,7 +32,8 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
   const handleUpload = async () => {
     if (selectedFile) {
       const formData = new FormData();
-      formData.append('tracking_id', parcel.tracking_id);
+      console.log(parcel)
+      formData.append('tracking_id', parcel.id);
       formData.append('price', parcel.price);
       formData.append('type', type);
       formData.append('website', website);
@@ -42,21 +44,27 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
         await axios.post(envirement.baseUrl + 'user/declarate-parcel', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-           
-              Authorization: `Bearer ${token}`,
-      
+
+            Authorization: `Bearer ${token}`,
+
           },
         });
-         message.success("დეკლერაცია აიტვირთა წარმატებით")
+        message.success("დეკლერაცია აიტვირთა წარმატებით")
       } catch (error) {
-        const err:any = error
+        const err: any = error
         message.error(err.message)
         console.error('Error uploading file:', error);
       }
     }
     closeModal();
   };
+  const [selectedParcel, setSelectedParcel] = useState<any>(null);
+  const [isDelecrationModalOpen,setIsDeclerationModalOpen] = useState(false)
 
+const handleOpenDeclaration = (parcel: any) => {
+  setSelectedParcel(parcel);
+  setIsDeclerationModalOpen(true);
+};
   const openDeclaration = () => {
     // Assuming invoice_Pdf is a buffer, you would need to convert it to a URL
     if (parcel.declaration && parcel.declaration.invoice_Pdf) {
@@ -106,16 +114,22 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
             <span>{parcel.vol_weight ?? 'N/A'}</span> {/* Updated from 'volume' to 'vol_weight' */}
           </div>
           <div className="flex items-center">
-            <span className="font-medium mr-1">ჩამოტანა:</span>
-            <span>{parcel.shipping_status ?? 'N/A'}</span> {/* Changed 'takeOutPrice' to 'shipping_status' for consistency */}
-          </div>
+  <span className="font-medium mr-1">გადახდა:</span>
+  <span
+    className={`font-bold ${
+      parcel.payment_status === "Unpaid" ? "text-red-500" : "text-green-500"
+    }`}
+  >
+    {parcel.payment_status === "Unpaid" ? "გადაუხდელია" : "გადახდილია"}
+  </span>
+</div>
           <div className="flex items-center">
             {parcel.declaration ? (
               <button
                 className="ml-2 bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-700"
-                onClick={openDeclaration}
+                onClick={()=>handleOpenDeclaration(parcel)}
               >
-               აქტიური დეკლარაცია
+                აქტიური დეკლარაცია
               </button>
             ) : (
               <button
@@ -166,6 +180,59 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
           </Button>
         </div>
       </Modal>
+{/* delecration modal */}
+<Modal
+          title="დეკლარაცის დეტალები"
+          open={isDelecrationModalOpen}
+          onCancel={() => setIsDeclerationModalOpen(false)}
+          footer={null}
+        >
+          {selectedParcel?.declaration ? (
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ID:</span>
+                <span className="w-2/3">{selectedParcel.declaration.id}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ტიპი:</span>
+                <span className="w-2/3">{selectedParcel.declaration.type}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ფასი:</span>
+                <span className="w-2/3">${selectedParcel.declaration.price}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">Website:</span>
+                <a href={selectedParcel.declaration.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 w-2/3">
+                  {selectedParcel.declaration.website}
+                </a>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">კომენტარი:</span>
+                <span className="w-2/3">{selectedParcel.declaration.comment}</span>
+              </div>
+              {selectedParcel.declaration.invoice_Pdf && (
+                <div className="flex justify-center mt-6">
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      const blob = new Blob(
+                        [new Uint8Array(selectedParcel.declaration.invoice_Pdf.data)],
+                        { type: 'application/pdf' }
+                      );
+                      const url = URL.createObjectURL(blob);
+                      window.open(url);
+                    }}
+                  >
+                    ინვოისის ნახვა
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No Declaration Available</p>
+          )}
+        </Modal>
     </div>
   );
 }

@@ -34,7 +34,7 @@ export default function StorageUnit() {
       useEffect(()=>{
         if(data && data?.data ){
           console.log(data.data.parcels)
-  let newData = data.data.parcels.filter((val:any) => val.shipping_status == "brought")
+  let newData = data.data.parcels.filter((val:any) => val.shipping_status == "Brought")
   setStorageData (newData)
         }
       },[data ])

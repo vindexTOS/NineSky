@@ -3,8 +3,7 @@ import { Table, Pagination, Button, Modal, Form, Input, message, Select } from '
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { GetAllUsers } from '../../API/User/GetRequests';
 import Loading from '../../components/status/Loading';
-import { RegisterType } from '../../types/authTypes';
-import { UpdateUserInfo } from '../../API/Admin/UpdateUser';
+ import { UpdateUserInfo } from '../../API/Admin/UpdateUser';
 import { GetParcels, UpdateParcels } from '../../API/Admin/CreateParcels';
 import {ShippingStatus} from "../../types/shipping_status"
 export default function UsersManagement() {
@@ -127,15 +126,10 @@ export default function UsersManagement() {
   });
 
   const handleUpdate = (values: any) => {
+    console.log(values)
     const convertedValues = {
-      ...values,
-      tracking_id: values.tracking_id ? values.tracking_id : undefined,
-      flight_id: values.flight_id ? values.flight_id : undefined,
-      arrived_at: values.arrived_at,
-      weight: values.weight ? String(values.weight) : undefined,
-      price: values.price ? Number(values.price) : undefined,
-      ownerId: values.ownerId ? values.ownerId : undefined,
-      id: values.id,
+    ...values
+    
     };
 
     updateMutation.mutate({ ...convertedValues });
@@ -150,11 +144,16 @@ export default function UsersManagement() {
       });
     }
   };
+   const [selectedParcel, setSelectedParcel] = useState<any>(null);
+    const [isDelecrationModalOpen,setIsDeclerationModalOpen] = useState(false)
 
+  const handleOpenDeclaration = (parcel: any) => {
+    setSelectedParcel(parcel);
+    setIsDeclerationModalOpen(true);
+  };
   const columns2 = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Tracking ID', dataIndex: 'tracking_id', key: 'tracking_id' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
+     { title: 'Price', dataIndex: 'price', key: 'price' },
     { title: 'Weight', dataIndex: 'weight', key: 'weight' },
     { title: 'Payment Status', dataIndex: 'payment_status', key: 'payment_status' },
     {
@@ -169,6 +168,18 @@ export default function UsersManagement() {
           style={{ width: 120 }}
         />
       ),
+    },
+    {
+      title: 'Declaration',
+      key: 'declaration',
+      render: (_: any, parcel: any) =>
+        parcel.declaration ? (
+          <Button type="link" onClick={() => handleOpenDeclaration(parcel)}>
+            დეკლარაცის ნახვა
+          </Button>
+        ) : (
+          <span>დეკლარაცის გარეშე</span>
+        ),
     },
   ];
 
@@ -281,6 +292,7 @@ export default function UsersManagement() {
                 <Input />
               </Form.Item>
               <Form.Item label="Password" name="password">
+                
                 <Input.Password />
               </Form.Item>
               <Form.Item label="First Name" name="first_name">
@@ -316,6 +328,59 @@ export default function UsersManagement() {
                 </Button>
               </Form.Item>
             </Form>
+          )}
+        </Modal>
+        {/*  */}
+        <Modal
+          title="Declaration Details"
+          open={isDelecrationModalOpen}
+          onCancel={() => setIsDeclerationModalOpen(false)}
+          footer={null}
+        >
+          {selectedParcel?.declaration ? (
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ID:</span>
+                <span className="w-2/3">{selectedParcel.declaration.id}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ტიპი:</span>
+                <span className="w-2/3">{selectedParcel.declaration.type}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ფასი:</span>
+                <span className="w-2/3">${selectedParcel.declaration.price}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">Website:</span>
+                <a href={selectedParcel.declaration.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 w-2/3">
+                  {selectedParcel.declaration.website}
+                </a>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">კომენტარი:</span>
+                <span className="w-2/3">{selectedParcel.declaration.comment}</span>
+              </div>
+              {selectedParcel.declaration.invoice_Pdf && (
+                <div className="flex justify-center mt-6">
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      const blob = new Blob(
+                        [new Uint8Array(selectedParcel.declaration.invoice_Pdf.data)],
+                        { type: 'application/pdf' }
+                      );
+                      const url = URL.createObjectURL(blob);
+                      window.open(url);
+                    }}
+                  >
+                    ინვოისის ნახვა
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No Declaration Available</p>
           )}
         </Modal>
       </div>

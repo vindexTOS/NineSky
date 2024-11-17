@@ -34,7 +34,7 @@ export default function OnTheWay() {
       useEffect(()=>{
         if(data && data?.data ){
           console.log(data.data.parcels)
-  let newData = data.data.parcels.filter((val:any) => val.shipping_status == "shipped")
+  let newData = data.data.parcels.filter((val:any) => val.shipping_status == "Shipped")
   setStorageData (newData)
         }
       },[data ])

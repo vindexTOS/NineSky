@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Modal } from "antd";
 import {
   SettingOutlined,
   DropboxOutlined,
   EnvironmentOutlined,
   DollarOutlined,
   LogoutOutlined,
+  BankOutlined,
 } from "@ant-design/icons";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Swal from 'sweetalert2';
@@ -13,12 +14,18 @@ import Swal from 'sweetalert2';
 import { Content } from "antd/es/layout/layout";
 import { Outlet, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
+import BalanceModal from "../../components/modals/BalanceModal";
 
 const { Sider } = Layout;
 
 export default function UserMain() {
   const cookies = new Cookies()
   const navigate = useNavigate();
+  const [balacneModal,setBalanceModal] = useState(false)
+
+  const onBalanceCLose = ()=>{
+     setBalanceModal(false )
+  }
   const [selectedKey, setSelectedKey] = useState("parcel/storage");
   const handleMenuSelect = async ({ key }: { key: string }) => {
     if (key === 'logout') {
@@ -50,7 +57,9 @@ export default function UserMain() {
 
 
       }
-    } else {
+    } else if (key == "balance"){
+      setBalanceModal(true)
+    }else {
       setSelectedKey(key);
       navigate(key);
     }
@@ -102,6 +111,9 @@ export default function UserMain() {
           <Menu.Item key="address" icon={<EnvironmentOutlined />}>
             მისამართები
           </Menu.Item>
+          <Menu.Item key="balance" icon={<BankOutlined />}>
+            ბალანსის შევსება
+          </Menu.Item>
           <Menu.Item key="transactions" icon={<DollarOutlined />}>
             ტრანზაქციები
           </Menu.Item>
@@ -116,6 +128,10 @@ export default function UserMain() {
       </Sider>
       <Layout className="site-layout md:ml-[200px] ml-[50px] ">
         <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+          <Modal  title="შეივსე ბალანსი" open={balacneModal} onCancel={onBalanceCLose} footer={null}>
+
+            <BalanceModal/>
+          </Modal>
           <div className=" min-h-[100vh] h-[100%] w-[100%] flex items-center justify-center">
             <Outlet />
           </div>

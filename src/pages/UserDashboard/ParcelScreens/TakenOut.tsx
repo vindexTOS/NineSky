@@ -34,7 +34,7 @@ export default function TakenOut() {
       useEffect(()=>{
         if(data && data?.data ){
           console.log(data.data.parcels)
-  let newData = data.data.parcels.filter((val:any) => val.shipping_status == "taken")
+  let newData = data.data.parcels.filter((val:any) => val.shipping_status == "Taken")
   setStorageData (newData)
         }
       },[data])

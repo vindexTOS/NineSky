@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+ import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import * as XLSX from 'xlsx';
 import { CreateParcles, GetParcels, UpdateParcels } from '../../API/Admin/CreateParcels';
@@ -11,6 +11,7 @@ export default function ExcelUploadPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDelecrationModalOpen,setIsDeclerationModalOpen] = useState(false)
   const [isSingleParcelModalOpen, setIsSingleParcelModalOpen] = useState(false);
   const [selectedParcel, setSelectedParcel] = useState<any>(null);
   const [form] = Form.useForm();
@@ -95,7 +96,7 @@ export default function ExcelUploadPage() {
   });
 
   useEffect(() => {
-    console.log(parcelsData);
+    // console.log(parcelsData);
   }, [parcelsData]);
 
   const handleCancel = () => {
@@ -141,24 +142,19 @@ export default function ExcelUploadPage() {
   };
 
   const handleOpenDeclaration = (parcel: any) => {
-    if (parcel.declaration && parcel.declaration.invoice_Pdf) {
-      const blob = new Blob([new Uint8Array(parcel.declaration.invoice_Pdf.data)], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      window.open(url);
-    }
+    setSelectedParcel(parcel);
+    setIsDeclerationModalOpen(true);
   };
   const handleUpdate = (values: any) => {
     const convertedValues = {
-      ...values,
-      tracking_id: values.tracking_id ? values.tracking_id : undefined,
-      flight_id: values.flight_id ? values.flight_id : undefined,
-      arrived_at: values.arrived_at,
-      weight: values.weight ? String(values.weight) : undefined,
+      id: selectedParcel.id, // Keeping the original parcel ID
+      ownerId: selectedParcel.owner?.id, // Keeping the original owner ID
+      payment_status: values.payment_status,
       price: values.price ? Number(values.price) : undefined,
-      ownerId: values.ownerId ? values.ownerId : undefined,
-      id: selectedParcel.id,
+      shipping_status: values.shipping_status,
+      weight: values.weight ? Number(values.weight) : undefined,
     };
-
+  
     updateMutation.mutate(convertedValues);
   };
 
@@ -167,25 +163,25 @@ export default function ExcelUploadPage() {
     setSelectedParcel(null);
   };
  useEffect(()=>{
- console.log(parcelsData?.parcels)
+//  console.log(parcelsData?.parcels)
  },[parcelsData?.parcels])
   const columns = [
     { title: 'id', dataIndex: 'id', key: 'id' },
-    { title: 'Tracking ID', dataIndex: 'tracking_id', key: 'tracking_id' },
-    { title: 'Shipping status', dataIndex: 'shipping_status', key: 'shipping_status' },
-    { title: 'Pay Status', dataIndex: 'payment_status', key: 'payment_status' },
-    { title: 'Weight', dataIndex: 'weight', key: 'weight' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
+    // { title: 'Tracking ID', dataIndex: 'tracking_id', key: 'id' },
+    { title: 'გადაზიდვის სტატუსი', dataIndex: 'shipping_status', key: 'shipping_status' },
+    { title: 'გადახდის სტატუსი', dataIndex: 'payment_status', key: 'payment_status' },
+    { title: 'წონა', dataIndex: 'weight', key: 'weight' },
+    { title: 'ფასი', dataIndex: 'price', key: 'price' },
     {
       title: 'Declaration',
       key: 'declaration',
       render: (_: any, parcel: any) =>
         parcel.declaration ? (
           <Button type="link" onClick={() => handleOpenDeclaration(parcel)}>
-            View Declaration
+            დეკლარაცის ნახვა
           </Button>
         ) : (
-          <span>No Declaration</span>
+          <span>დეკლარაცის გარეშე</span>
         ),
     },
    
@@ -194,23 +190,27 @@ export default function ExcelUploadPage() {
       key: 'action',
       render: (_: any, parcel: any) => (
         <Button type="primary"  onClick={() => handleEdit(parcel)}>
-          Edit
-        </Button>
+  რედაქტ
+         </Button>
       ),
     },
   ];
 
   const handleEdit = (parcel: any) => {
-    console.log(parcel)
+    // console.log(parcel);
     setSelectedParcel(parcel);
     setIsEditModalOpen(true);
+  
+    // Set only the necessary fields from the received parcel data
     editForm.setFieldsValue({
-      ...parcel,
+      id: parcel.id,
       ownerId: parcel.owner?.id || '',
-      flight_id: parcel.flight_info?.flight_id || '', // Handle flight_id from flight_info if it exists
-      flight_from: parcel.flight_info?.flight_from?.toLowerCase() || '', // Handle flight_from from flight_info
-      arrived_at: parcel.flight_info?.arrived_at || '', // Handle arrived_at from flight_info
-    });  };
+      payment_status: parcel.payment_status || 'Unpaid',
+      price: parcel.price || '',
+      shipping_status: parcel.shipping_status || '',
+      weight: parcel.weight || '',
+    });
+  };
   return (
     <div className="p-10 min-h-screen">
       <div className="mx-auto bg-white rounded-lg p-8">
@@ -236,7 +236,7 @@ export default function ExcelUploadPage() {
           dataSource={parcelsData?.parcels || []}
           loading={isLoadingParcels}
           pagination={false}
-          rowKey="tracking_id"
+          rowKey="id"
           className="mb-6"
         />
         <Pagination
@@ -250,48 +250,66 @@ export default function ExcelUploadPage() {
           className="text-center"
         />
 
-        <Modal
-          title={selectedParcel ? 'Edit Parcel' : 'Add Parcel Manually'}
-          open={isModalOpen}
-          onCancel={handleCancel}
-          footer={null}
-        >
-          <Form form={form} layout="vertical" onFinish={handleUploadFinish}>
-            <Form.Item label="Flight ID" name="flight_id">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Flight From" name="flight_from">
-              <Select>
-                <Select.Option value="china">China</Select.Option>
-                <Select.Option value="Turkey">Turkey</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Arrived At" name="arrived_at">
-              <Input />
-            </Form.Item>
-            <Upload.Dragger
-              name="file"
-              multiple={false}
-              accept=".xlsx, .xls"
-              beforeUpload={(file) => {
-                handleFileUpload(file);
-                return false;
-              }}
-              className="mb-4"
-            >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <p className="ant-upload-hint">Support for a single file upload in .xlsx or .xls format.</p>
-            </Upload.Dragger>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={createMutation.isPending} className="w-full">
-                Save Parcel
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
+<Modal
+  title="Edit Parcel"
+  open={isEditModalOpen}
+  onCancel={handleEditCancel}
+  footer={null}
+>
+  <Form form={editForm} layout="vertical" onFinish={handleUpdate}>
+    <Form.Item
+      label="Parcel ID"
+      name="id"
+      rules={[{ required: true, message: 'Please enter a Parcel ID' }]}
+    >
+      <Input readOnly />
+    </Form.Item>
+    <Form.Item
+      label="Owner ID"
+      name="ownerId"
+      rules={[{ required: true, message: 'Please enter an Owner ID' }]}
+    >
+      <Input readOnly />
+    </Form.Item>
+    <Form.Item
+      label="Payment Status"
+      name="payment_status"
+      rules={[{ required: true, message: 'Please select a Payment Status' }]}
+    >
+      <Select>
+        <Select.Option value="Unpaid">Unpaid</Select.Option>
+        <Select.Option value="Paid">Paid</Select.Option>
+      </Select>
+    </Form.Item>
+    <Form.Item
+      label="Price"
+      name="price"
+      rules={[{ required: true, message: 'Please enter a Price' }]}
+    >
+      <Input type="number" />
+    </Form.Item>
+    <Form.Item
+      label="Shipping Status"
+      name="shipping_status"
+      rules={[{ required: true, message: 'Please enter a Shipping Status' }]}
+    >
+      <Input />
+    </Form.Item>
+    <Form.Item
+      label="Weight"
+      name="weight"
+      rules={[{ required: true, message: 'Please enter a Weight' }]}
+    >
+      <Input type="number" />
+    </Form.Item>
+    <Form.Item>
+      <Button type="primary" htmlType="submit" loading={updateMutation.isPending} className="w-full">
+        Update Parcel
+      </Button>
+    </Form.Item>
+  </Form>
+</Modal>
+
 {/* 
  */}
 
@@ -328,7 +346,7 @@ export default function ExcelUploadPage() {
             </Form.Item> */}
             <Form.Item
               label="Tracking ID"
-              name="tracking_id"
+              name="id"
               rules={[{ required: true, message: 'Please enter a Tracking ID' }]}
             >
               <Input />
@@ -380,7 +398,7 @@ export default function ExcelUploadPage() {
           <Form form={singleParcelForm} layout="vertical" onFinish={handleSingleParcelFinish}>
             <Form.Item
               label="Flight ID"
-              name="flight_id"
+              name="id"
               rules={[{ required: true, message: 'Please enter a Flight ID' }]}
             >
               <Input />
@@ -425,6 +443,60 @@ export default function ExcelUploadPage() {
               </Button>
             </Form.Item>
           </Form>
+        </Modal>
+
+        {/* delecration modal */}
+        <Modal
+          title="Declaration Details"
+          open={isDelecrationModalOpen}
+          onCancel={() => setIsDeclerationModalOpen(false)}
+          footer={null}
+        >
+          {selectedParcel?.declaration ? (
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ID:</span>
+                <span className="w-2/3">{selectedParcel.declaration.id}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ტიპი:</span>
+                <span className="w-2/3">{selectedParcel.declaration.type}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">ფასი:</span>
+                <span className="w-2/3">${selectedParcel.declaration.price}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">Website:</span>
+                <a href={selectedParcel.declaration.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 w-2/3">
+                  {selectedParcel.declaration.website}
+                </a>
+              </div>
+              <div className="flex items-center">
+                <span className="font-semibold w-1/3">კომენტარი:</span>
+                <span className="w-2/3">{selectedParcel.declaration.comment}</span>
+              </div>
+              {selectedParcel.declaration.invoice_Pdf && (
+                <div className="flex justify-center mt-6">
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      const blob = new Blob(
+                        [new Uint8Array(selectedParcel.declaration.invoice_Pdf.data)],
+                        { type: 'application/pdf' }
+                      );
+                      const url = URL.createObjectURL(blob);
+                      window.open(url);
+                    }}
+                  >
+                    ინვოისის ნახვა
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No Declaration Available</p>
+          )}
         </Modal>
       </div>
     </div>
