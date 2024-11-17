@@ -193,9 +193,8 @@ export default function RegistrationForm() {
               >
 
                 <Select placeholder="Select an office">
-                  <Option value="office1">Office 1</Option>
-                  <Option value="office2">Office 2</Option>
-                  <Option value="office3">Office 3</Option>
+                  <Option value="office1">ფონიჭალა lll მ/რ, კ13 1</Option>
+            
 
                 </Select>
               </Form.Item>
@@ -203,7 +202,7 @@ export default function RegistrationForm() {
               <Form.Item
                 label="პაროლი"
                 name="password"
-                rules={[{ required: true, message: 'გთხოვთ შეიყვანეთ პაროლი!', }, { min: 6, message: 'პაროლი უნდა იყოს მინიმუმ 6 სიმბოლო!' }]}
+                rules={[{ required: true, message: 'გთხოვთ შეიყვანეთ პაროლი!', }, { min: 8, message: 'პაროლი უნდა იყოს მინიმუმ 6 სიმბოლო!' }]}
               >
                 <Input.Password placeholder="პაროლი" prefix={<LockOutlined />} />
               </Form.Item>

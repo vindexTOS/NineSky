@@ -73,13 +73,13 @@ const cookies = new Cookies
             Users
           </Menu.Item>*/}
           <Menu.Item key="user-managment" icon={<UserOutlined />}>
-            Users
+      მომხმარებლები
           </Menu.Item> 
           <Menu.Item key="excel-upload" icon={<FileOutlined />}>
-          Upload Parcel
+           ამანათები
           </Menu.Item>
           <Menu.Item key="price-managment" icon={<DollarCircleOutlined />}>
-            ფასის მენეჯმენტი
+            ფასის
           </Menu.Item>
           <Menu.Item key="logout" icon={<LogoutOutlined />}>
             გამოსვლა
@@ -103,9 +103,7 @@ const cookies = new Cookies
         <Content style={{ padding: '0 24px', minHeight: 280 }}>
         
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-            {/* Dashboard content goes here */}
-            <h1>Welcome to the Admin Dashboard</h1>
-            {/* Add additional content and components here */}
+    
             <Outlet/>
           </div>
         </Content>

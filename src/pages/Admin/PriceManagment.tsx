@@ -52,7 +52,7 @@ export default function PriceManagment() {
 
   return (
     <div className="p-5">
-      <h2 className="text-2xl font-semibold mb-4">Price Management</h2>
+      <h2 className="text-2xl font-semibold mb-4">ფასის მენეჯმენტი</h2>
       <Card className="max-w-lg mx-auto p-6 shadow-md rounded-lg">
         {prices && Object.keys(prices).length > 0 && (
           Object.entries(prices).map(([country, price]: any) => (
@@ -75,7 +75,7 @@ export default function PriceManagment() {
           onClick={handleSave}
           loading={updatePriceMutation.isPending}
         >
-          Save Changes
+         ცვლილების შენახვა
         </Button>
       </Card>
     </div>

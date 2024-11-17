@@ -50,11 +50,12 @@ function App() {
 {/* admin */}
 
  <Route path='/admin' element={<AdminLogin/>} />
- <Route path='/admin-dashboard' element={<AdminAuthGuard><AdminDashboard/></AdminAuthGuard>}  > 
- <Route path="excel-upload" element={<AdminAuthGuard><ExcelUploadPage/></AdminAuthGuard>} />
- <Route  path="user-managment"  element={<AdminAuthGuard><UsersManagment/></AdminAuthGuard>}/>
- <Route  path="price-managment"  element={<AdminAuthGuard><PriceManagment/></AdminAuthGuard>}/>
- </Route>
+ <Route path='/admin-dashboard' element={<AdminAuthGuard><AdminDashboard /></AdminAuthGuard>}>
+  <Route index element={<Navigate to="excel-upload" />} />
+  <Route path="excel-upload" element={<AdminAuthGuard><ExcelUploadPage /></AdminAuthGuard>} />
+  <Route path="user-managment" element={<AdminAuthGuard><UsersManagment /></AdminAuthGuard>} />
+  <Route path="price-managment" element={<AdminAuthGuard><PriceManagment /></AdminAuthGuard>} />
+</Route>
 {/*  */}
 
         <Route path="*" element={<NotFound />} />
