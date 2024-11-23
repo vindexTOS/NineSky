@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Button, Modal, Form, Input, message, Select } from 'antd';
+import { Table, Pagination, Button, Modal, Form, Input, message, Select ,Typography} from 'antd';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { GetAllUsers } from '../../API/User/GetRequests';
 import Loading from '../../components/status/Loading';
  import { UpdateUserInfo } from '../../API/Admin/UpdateUser';
 import { GetParcels, UpdateParcels } from '../../API/Admin/CreateParcels';
 import {ShippingStatus} from "../../types/shipping_status"
+import { DeleteUser } from '../../API/Admin/DeleteRequests';
 export default function UsersManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalCurrentPage, setModalCurrentPage] = useState(1);
@@ -14,11 +15,12 @@ export default function UsersManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isDetalseModalOpen, setIsDetalesModalOpen] = useState(false)
+  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(false)
   const [detaledUserInfo, setDetaledUserInfo] = useState<any>()
   const [form] = Form.useForm();
 
 
-
+const {Text} = Typography
 
   const shippingStatusOptions = Object.values(ShippingStatus).map((status) => ({
     label: status.charAt(0).toUpperCase() + status.slice(1), // Capitalize the label
@@ -31,25 +33,47 @@ export default function UsersManagement() {
     queryFn: () => GetAllUsers(searchTerm, currentPage, 10),
   });
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
 
+  const deleteMutation = useMutation({
+     mutationFn:(id:string)=>{
+      return DeleteUser(id )
+     },
+     onSuccess(){
+      message.success('მომხმარებელი წაიშალა');
+
+     },
+     onError(){
+      message.error('შეცდომა მომხმარებელის წაშლა ვერ მოხერხდა!');
+
+     }
+  })
+
+  const handleDeleteMutation = async (id:string)=>{
+      await deleteMutation.mutateAsync(id)
+  }
+  // useEffect(() => {
+  //   console.log(data);
+  // }, [data]);
+
+  const handleDelete = async (id: string ) => {
+    setSelectedUserId(id)
+    setIsDeleteModalOpen(true)
+  };
 
 
   const handleDetales = async (userId: string, page = 1) => {
     setSelectedUserId(userId)
     setIsDetalesModalOpen(true);
     const data = await GetParcels('', userId, page, 10);
-    console.log(data)
+    // console.log(data)
     setDetaledUserInfo(data);
     setModalCurrentPage(page); // Set current page for modal pagination
   };
 
   // Handle modal pagination
   const handleModalPagination = async (page: any) => {
-    console.log(selectedUser)
+    // console.log(selectedUser)
     if (selectedUserId) {
       await handleDetales(selectedUserId, page); // Fetch data for the new page
     }
@@ -60,7 +84,7 @@ export default function UsersManagement() {
     setIsDetalesModalOpen(false);
   };
   const handleEdit = (user: any) => {
-     console.log(user)
+    //  console.log(user)
     setSelectedUser(user);
     setIsModalOpen(true);
     delete user.userDetails.id
@@ -69,7 +93,7 @@ export default function UsersManagement() {
       ...user,
       ...user.userDetails,
     });
-    console.log(user)
+    // console.log(user)
   };
 
   const handleCancel = () => {
@@ -126,7 +150,7 @@ export default function UsersManagement() {
   });
 
   const handleUpdate = (values: any) => {
-    console.log(values)
+    // console.log(values)
     const convertedValues = {
     ...values
     
@@ -198,6 +222,7 @@ export default function UsersManagement() {
     { title: 'City', dataIndex: ['userDetails', 'city'], key: 'city' },
     { title: 'Address', dataIndex: ['userDetails', 'address'], key: 'address' },
     { title: 'Access Level', dataIndex: 'accessLevel', key: 'accessLevel' },
+ 
     {
       title: 'Detales',
       key: 'detales',
@@ -207,16 +232,30 @@ export default function UsersManagement() {
           style={{ backgroundColor: 'green', borderColor: 'green', color: 'white' }}
           onClick={() => handleDetales(parcel.id)}
         >
-          Detales
+          დეტალურად
         </Button>
       ),
     },
+    
     {
       title: 'Action',
       key: 'action',
       render: (_: any, user: any) => (
         <Button type="primary" onClick={() => handleEdit(user)}>
-          Edit
+          შეცვლა
+        </Button>
+      ),
+    },
+    {
+      title: 'Delete',
+      key: 'delete',
+      render: (_: any, parcel: any) => (
+        <Button
+          type="primary"
+          style={{ backgroundColor: 'red', borderColor: 'red', color: 'white' }}
+          onClick={() => handleDelete(parcel.id)}
+        >
+          წაშლა
         </Button>
       ),
     },
@@ -324,12 +363,43 @@ export default function UsersManagement() {
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={mutation.isPending} className="w-full">
-                  Save Changes
+                  შენახვა
                 </Button>
               </Form.Item>
             </Form>
           )}
         </Modal>
+        {/*  */}
+  {/* delete modal */}
+  <Modal
+      title="Delete Declaration"
+      open={isDeleteModalOpen}
+      onCancel={() => setIsDeleteModalOpen(false)}
+      footer={null} // Custom footer instead of default buttons
+    >
+      <div style={{ textAlign: "center" }}>
+        {/* Styled Question */}
+        <Text strong style={{ fontSize: "16px" }}>
+         დარწმუნებული ხართ რომ გსურთ ამ უსერის წაშლა ?
+        </Text>
+        
+        {/* Action Buttons */}
+        <div style={{ marginTop: "20px" }}>
+          <Button
+            type="primary"
+            danger
+            onClick={() => {
+              handleDeleteMutation(selectedUserId);
+              setIsDeleteModalOpen(false);
+            }}
+            style={{ marginRight: "10px" }}
+          >
+            კი,წაშალე
+          </Button>
+          <Button onClick={() => setIsDeleteModalOpen(false)}>გაუქმება</Button>
+        </div>
+      </div>
+    </Modal>
         {/*  */}
         <Modal
           title="Declaration Details"

@@ -18,7 +18,7 @@ export default function Arrived() {
  const [selectedRowPrice,setSelectedRowPrice] = useState<number>(0)
 
   const handleSelectedRowPrice = (rb:any)=>{
-        console.log(rb)
+        // console.log(rb)
 
         let totalPrice = rb.map((val:any)=> Number(val.price)).reduce((a:number,b:number)=> a + b)
     setSelectedRowPrice(totalPrice)
@@ -43,7 +43,7 @@ export default function Arrived() {
 
 
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch} = useQuery({
     queryKey: ["user-info"],
     queryFn: () => userInfo ? GetUserInfo() : Promise.resolve(),
     enabled: !!userInfo
@@ -85,7 +85,7 @@ const calclatePayAmount = () => {
  };
 
   useEffect(() => {
-    console.log(StorageData)
+    // console.log(StorageData)
     if (StorageData.length > 0) {
       calclatePayAmount()
     }
@@ -125,11 +125,11 @@ const calclatePayAmount = () => {
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-      console.log( selectedRowKeys)
+      // console.log( selectedRowKeys)
       let newArr =  selectedRowKeys.map((val:any)=> {
         return {tracking_id:val}
       })
-      console.log(newArr)
+      // console.log(newArr)
       setSelectedRows(newArr);
       handleSelectedRowPrice (selectedRows)
     },
@@ -170,7 +170,7 @@ const calclatePayAmount = () => {
           </div>
         </Modal>
       </div>
-      <ParcelsTable data={StorageData} color={'#ffb71c'} title={'ჩამოსული'} />
+      <ParcelsTable refetch={refetch} data={StorageData} color={'#ffb71c'} title={'ჩამოსული'} />
     </div>
 
   );

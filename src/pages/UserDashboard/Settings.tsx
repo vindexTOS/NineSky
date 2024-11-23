@@ -31,7 +31,7 @@ const Settings: React.FC = () => {
       setToken(token)
 
       let decodedUser = await jwt_decode(token)
-      console.log(decodedUser)
+      // console.log(decodedUser)
       setUserInfo(decodedUser)
     }
 
@@ -68,7 +68,7 @@ const Settings: React.FC = () => {
    
 
   useEffect(() => {
-    console.log(data)
+    // console.log(data)
     if (data) {
       form.setFieldsValue({
       

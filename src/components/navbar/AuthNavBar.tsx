@@ -43,9 +43,9 @@ useEffect(() => {
 }, [decodedUser]);
 
 
-useEffect(()=>{
-console.log(userInfo)
-},[userInfo])
+// useEffect(()=>{
+// // console.log(userInfo)
+// },[userInfo])
  if(userInfo?.email && decodedUser.accessLevel <= 0){
 
   return (

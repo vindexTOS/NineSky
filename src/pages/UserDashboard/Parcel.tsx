@@ -9,9 +9,9 @@ import { GrRadialSelected } from "react-icons/gr";
 export default function Parcel() {
     const navigation = useNavigate()
     const location = useLocation()
-    useEffect(() => {
-        console.log(location.pathname)
-    }, [])
+    // useEffect(() => {
+    //     console.log(location.pathname)
+    // }, [])
     return (
         <div className="flex    items-start justify-start   h-[100%] flex-col gap-20 md:mr-80 mr-0 pt-40 p-6 rounded-lg  ">
 

@@ -5,9 +5,10 @@ type ParcelsPropType = {
   data: any; 
   color: string; 
   title: string; 
+  refetch:any
 }
 
-const ParcelsTable: FC<ParcelsPropType> = ({ data, color, title }) => {
+const ParcelsTable: FC<ParcelsPropType> = ({ data, color, title, refetch }) => {
   const [parcels, setParcels] = React.useState<any>([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(0);
@@ -40,7 +41,7 @@ const ParcelsTable: FC<ParcelsPropType> = ({ data, color, title }) => {
         <h1 className="text-[1.5rem] text-gray-400">{title}</h1>
       </div>
       {transferData.map((parcel: any, index: number) => (
-        <ParcelsCard key={index} parcel={parcel} color={color} />
+        <ParcelsCard  refetch={refetch} key={index} parcel={parcel} color={color} />
       ))}
 
       {/* Pagination Controls */}

@@ -145,7 +145,7 @@ export default function RegistrationForm() {
                 label="ტელეფონის ნომერი"
                 name="phone_number"
                 rules={[
-                  { required: true, message: 'გთხოვთ შეიყვანეთ თქვენი ტელეფონის ნომერი!' },
+                  { required: true, min: 9,max:15, message: 'ტელეფონის ნომერი უნდა იყოს 9 დან 15 ციფრამდე' },
                   {
                     validator: (_, value) => {
                       const regex = /^\d+$/; // Regular expression to check if the value contains only digits
@@ -173,7 +173,7 @@ export default function RegistrationForm() {
               <Form.Item
                 label="City"
                 name="city"
-                rules={[{ required: true, message: 'Please enter your city!' }]}
+                rules={[{ required: true, message: 'გთხოვთ დაწერეთ თქვენი ქალაქი' }]}
               >
                 <Input placeholder="City" prefix={<GlobalOutlined />} />
               </Form.Item>
@@ -181,7 +181,7 @@ export default function RegistrationForm() {
               <Form.Item
                 label="Address"
                 name="address"
-                rules={[{ required: true, message: 'Please enter your address!' }]}
+                rules={[{ required: true, message: 'გთხოვთ დაწერეთ თქვენი მისამართი' }]}
               >
                 <Input placeholder="Address" prefix={<EnvironmentOutlined />} />
               </Form.Item>
@@ -189,11 +189,11 @@ export default function RegistrationForm() {
               <Form.Item
                 label="Office"
                 name="office"
-                rules={[{ required: true, message: 'Please select an office!' }]}
+                rules={[{ required: true, message: 'გთხოვთ აირჩიეთ ოფისი' }]}
               >
 
                 <Select placeholder="Select an office">
-                  <Option value="office1">ფონიჭალა lll მ/რ, კ13 1</Option>
+                  <Option value="ფონიჭალა lll მ/რ, კ13 1">ფონიჭალა lll მ/რ, კ13 1</Option>
             
 
                 </Select>

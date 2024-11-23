@@ -22,7 +22,7 @@ export const GetPrice = async () => {
 }
 
 export const UpdatePrice = async (body: any) => {
-    console.log(body);
+    // console.log(body);
     try {
       const token = cookies.get("token");
       

@@ -23,12 +23,12 @@ export default function Address() {
   }, []);
 
   useEffect(() => {
-    console.log(decodedUser)
+    // console.log(decodedUser)
 
     if (decodedUser && decodedUser.sub) {
       const fetchData = async () => {
         const data: any = await GetUserInfo( );
-        console.log(data)
+        // console.log(data)
         setUserInfo({ ...decodedUser, ...data?.data });
       };
       fetchData();
@@ -36,7 +36,7 @@ export default function Address() {
   }, [decodedUser]);
 
   useEffect(() => {
-    console.log(userInfo)
+    // console.log(userInfo)
     if (userInfo && userInfo.userDetails.first_name) {
       const addresses = {
         china: {

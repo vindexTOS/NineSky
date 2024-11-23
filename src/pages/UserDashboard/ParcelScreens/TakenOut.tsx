@@ -18,7 +18,7 @@ export default function TakenOut() {
  
 
       let decodedUser = await jwt_decode(token)
-      console.log(decodedUser)
+      // console.log(decodedUser)
       setUserInfo(decodedUser)
     }
 
@@ -26,14 +26,14 @@ export default function TakenOut() {
 
   }, [])
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["user-info"  ],
     queryFn: () => userInfo ? GetUserInfo( ) : Promise.resolve(),
     enabled: !!userInfo
   });
       useEffect(()=>{
         if(data && data?.data ){
-          console.log(data.data.parcels)
+          // console.log(data.data.parcels)
   let newData = data.data.parcels.filter((val:any) => val.shipping_status == "Taken")
   setStorageData (newData)
         }
@@ -41,7 +41,7 @@ export default function TakenOut() {
 
   return (
 
-    <ParcelsTable data={StorageData} color={'#00cd63'} title={'გატანილი'} />
+    <ParcelsTable refetch={refetch} data={StorageData} color={'#00cd63'} title={'გატანილი'} />
 
   )
 }

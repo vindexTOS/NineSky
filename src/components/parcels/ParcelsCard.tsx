@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
-export default function ParcelsCard({ parcel, color }: { parcel: any, color: string }) {
+export default function ParcelsCard({ parcel, color , refetch}: { parcel: any, color: string, refetch:any }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [type, setType] = useState('');
@@ -32,7 +32,7 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
   const handleUpload = async () => {
     if (selectedFile) {
       const formData = new FormData();
-      console.log(parcel)
+      // console.log(parcel)
       formData.append('tracking_id', parcel.id);
       formData.append('price', parcel.price);
       formData.append('type', type);
@@ -49,6 +49,7 @@ export default function ParcelsCard({ parcel, color }: { parcel: any, color: str
 
           },
         });
+        refetch()
         message.success("დეკლერაცია აიტვირთა წარმატებით")
       } catch (error) {
         const err: any = error

@@ -13,7 +13,7 @@ const AdminAuthGuard= ({ children }: { children: ReactNode }) => {
       
     if(token){
        const decodedToken = jwt_decode(token)
-       console.log( decodedToken )
+      //  console.log( decodedToken )
        setDecoded(decodedToken )
     }
   }

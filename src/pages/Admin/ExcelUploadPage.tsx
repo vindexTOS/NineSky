@@ -3,8 +3,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import * as XLSX from 'xlsx';
 import { CreateParcles, GetParcels, UpdateParcels } from '../../API/Admin/CreateParcels';
 import Loading from '../../components/status/Loading';
-import { Button, Modal, Form, Input, message, Table, Pagination, Upload, Select } from 'antd';
+import { Button, Modal, Form, Input,Typography, message, Table, Pagination, Upload, Select } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
+import { DeleteParcel } from '../../API/Admin/DeleteRequests';
 
 export default function ExcelUploadPage() {
   const [data, setData] = useState<any>([]);
@@ -16,9 +17,14 @@ export default function ExcelUploadPage() {
   const [selectedParcel, setSelectedParcel] = useState<any>(null);
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
+  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(false)
 
   const [singleParcelForm] = Form.useForm();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+const [ selectedParcelId,setSelectedParcelId] = useState("")
+
+
+const {Text} = Typography
 
   const handleManualOpen = () => {
     form.resetFields();
@@ -26,8 +32,14 @@ export default function ExcelUploadPage() {
     setSelectedParcel(null);
   };
 
- 
+  const handleDelete = async (id: string ) => {
+    setSelectedParcelId(id)
+    setIsDeleteModalOpen(true)
+  };
 
+ const handleDeleteMutation = async (id:string)=>{
+  await deleteMutation.mutateAsync(id)
+}
   const handleFileUpload = async (file: File) => {
     const reader = new FileReader();
     reader.onload = async (event) => {
@@ -62,6 +74,20 @@ export default function ExcelUploadPage() {
     }
   };
 
+  const deleteMutation = useMutation({
+    mutationFn:(id:string)=>{
+     return DeleteParcel(id )
+    },
+    onSuccess(){
+     message.success('ამანათი წაიშალა');
+     refetch()
+
+    },
+    onError(){
+     message.error('შეცდომა ამანათის წაშლა ვერ მოხერხდა!');
+
+    }
+ })
   const createMutation = useMutation({
     mutationFn: (body: any) => {
       return CreateParcles(body);
@@ -194,6 +220,19 @@ export default function ExcelUploadPage() {
          </Button>
       ),
     },
+    {
+      title: 'Delete',
+      key: 'delete',
+      render: (_: any, parcel: any) => (
+        <Button
+          type="primary"
+          style={{ backgroundColor: 'red', borderColor: 'red', color: 'white' }}
+          onClick={() => handleDelete(parcel.id)}
+        >
+          წაშლა
+        </Button>
+      ),
+    },
   ];
 
   const handleEdit = (parcel: any) => {
@@ -260,31 +299,31 @@ export default function ExcelUploadPage() {
     <Form.Item
       label="Parcel ID"
       name="id"
-      rules={[{ required: true, message: 'Please enter a Parcel ID' }]}
+      rules={[{ required: true, message: 'ჩაწერეთ ამანათის ID' }]}
     >
       <Input readOnly />
     </Form.Item>
     <Form.Item
       label="Owner ID"
       name="ownerId"
-      rules={[{ required: true, message: 'Please enter an Owner ID' }]}
+      rules={[{ required: true, message: 'ჩაწერეთ მომხარებლის ID' }]}
     >
       <Input readOnly />
     </Form.Item>
     <Form.Item
       label="Payment Status"
       name="payment_status"
-      rules={[{ required: true, message: 'Please select a Payment Status' }]}
+      rules={[{ required: true, message: 'ჩაწერეთ გადახდის სტატუსი' }]}
     >
       <Select>
-        <Select.Option value="Unpaid">Unpaid</Select.Option>
-        <Select.Option value="Paid">Paid</Select.Option>
+        <Select.Option value="Unpaid">გადახდილი</Select.Option>
+        <Select.Option value="Paid">გადაუხდელი</Select.Option>
       </Select>
     </Form.Item>
     <Form.Item
       label="Price"
       name="price"
-      rules={[{ required: true, message: 'Please enter a Price' }]}
+      rules={[{ required: true, message: 'გთხოვთ ჩაწერეთ ფასი' }]}
     >
       <Input type="number" />
     </Form.Item>
@@ -298,13 +337,13 @@ export default function ExcelUploadPage() {
     <Form.Item
       label="Weight"
       name="weight"
-      rules={[{ required: true, message: 'Please enter a Weight' }]}
+      rules={[{ required: true, message: 'გთხოვთ ჩაწერე წონა' }]}
     >
       <Input type="number" />
     </Form.Item>
     <Form.Item>
       <Button type="primary" htmlType="submit" loading={updateMutation.isPending} className="w-full">
-        Update Parcel
+         ამანათის განახელბა
       </Button>
     </Form.Item>
   </Form>
@@ -312,7 +351,49 @@ export default function ExcelUploadPage() {
 
 {/* 
  */}
-
+         <Modal
+          title={selectedParcel ? 'Edit Parcel' : 'Add Parcel Manually'}
+          open={isModalOpen}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          <Form form={form} layout="vertical" onFinish={handleUploadFinish}>
+            <Form.Item label="Flight ID" name="flight_id">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Flight From" name="flight_from">
+              <Select>
+                <Select.Option value="china">China</Select.Option>
+                <Select.Option value="Turkey">Turkey</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Arrived At" name="arrived_at">
+              <Input />
+            </Form.Item>
+            <Upload.Dragger
+              name="file"
+              multiple={false}
+              accept=".xlsx, .xls"
+              beforeUpload={(file) => {
+                handleFileUpload(file);
+                return false;
+              }}
+              className="mb-4"
+            >
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">დააკლიკეთ ან ჩააგდეთ excel ფაილი აქ</p>
+              <p className="ant-upload-hint"> მხოლოდ .xlsx  ან .xls ფორმატები.</p>
+            </Upload.Dragger>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={createMutation.isPending} className="w-full">
+                Save Parcel
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+{/*  */}
 <Modal
           title="Edit Parcel"
           open={isEditModalOpen}
@@ -444,7 +525,37 @@ export default function ExcelUploadPage() {
             </Form.Item>
           </Form>
         </Modal>
-
+        {/*  */}
+        <Modal
+      title="Delete Declaration"
+      open={isDeleteModalOpen}
+      onCancel={() => setIsDeleteModalOpen(false)}
+      footer={null} // Custom footer instead of default buttons
+    >
+      <div style={{ textAlign: "center" }}>
+        {/* Styled Question */}
+        <Text strong style={{ fontSize: "16px" }}>
+         დარწმუნებული ხართ რომ გსურთ ამ  ამანათის წაშლა ?
+        </Text>
+        
+        {/* Action Buttons */}
+        <div style={{ marginTop: "20px" }}>
+          <Button
+            type="primary"
+            danger
+            onClick={() => {
+              handleDeleteMutation(selectedParcelId);
+              setIsDeleteModalOpen(false);
+            }}
+            style={{ marginRight: "10px" }}
+          >
+            კი,წაშალე
+          </Button>
+          <Button onClick={() => setIsDeleteModalOpen(false)}>გაუქმება</Button>
+        </div>
+      </div>
+    </Modal>
+{/*  */}
         {/* delecration modal */}
         <Modal
           title="Declaration Details"
@@ -495,7 +606,7 @@ export default function ExcelUploadPage() {
               )}
             </div>
           ) : (
-            <p className="text-center text-gray-500">No Declaration Available</p>
+            <p className="text-center text-gray-500">დეკლერაცია არ მოიძებნა</p>
           )}
         </Modal>
       </div>
