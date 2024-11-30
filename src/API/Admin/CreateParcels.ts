@@ -22,7 +22,7 @@ export const CreateParcles = async (body: any) => {
 };
 
 export const UpdateParcels = async ( body:any)=>{
-    console.log(body)
+    // console.log(body)
    const id  = body.id
    delete body.declaration;
  

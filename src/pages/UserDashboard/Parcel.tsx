@@ -13,9 +13,9 @@ export default function Parcel() {
     //     console.log(location.pathname)
     // }, [])
     return (
-        <div className="flex    items-start justify-start   h-[100%] flex-col gap-20 md:mr-80 mr-0 pt-40 p-6 rounded-lg  ">
+        <div className="flex items-start justify-start   h-[100%] flex-col gap-20 md:mr-80 mr-0 pt-40 p-6 rounded-lg  ">
 
-            <div className="flex md:space-x-4  gap-4 md:flex-nowrap flex-wrap ">
+            <div className="flex md:space-x-4   gap-4 md:flex-nowrap flex-wrap ">
                 <Button
                     onClick={() => navigation('storage')}
                     type="primary"

@@ -251,295 +251,214 @@ const {Text} = Typography
     });
   };
   return (
-    <div className="p-10 min-h-screen">
-      <div className="mx-auto bg-white rounded-lg p-8">
-        <div className="flex justify-between mb-6 flex-col">
-          <Button type="primary" onClick={handleManualOpen}>
-            +  ექსელით შექმნა   +
-          </Button>
-          <Button type="primary" onClick={handleSingleParcelOpen} className="mt-4">
-            + ერთის შექმნა +
-          </Button>
-        </div>
-        <Input.Search
-          placeholder="Search by Tracking ID"
-          onSearch={(value) => setSearchTerm(value)}
-          enterButton
-          className="mb-6"
-          size="large"
-        />
-        <Loading loading={createMutation.isPending || isLoadingParcels} />
-
-        <Table
-          columns={columns}
-          dataSource={parcelsData?.parcels || []}
-          loading={isLoadingParcels}
-          pagination={false}
-          rowKey="id"
-          className="mb-6"
-        />
-        <Pagination
-          current={currentPage}
-          total={parcelsData?.totalCount || 0}
-          pageSize={10}
-          onChange={handlePaginationChange}
-          showSizeChanger={false}
-          showQuickJumper
-          simple
-          className="text-center"
-        />
-
-<Modal
-  title="Edit Parcel"
-  open={isEditModalOpen}
-  onCancel={handleEditCancel}
-  footer={null}
->
-  <Form form={editForm} layout="vertical" onFinish={handleUpdate}>
-    <Form.Item
-      label="Parcel ID"
-      name="id"
-      rules={[{ required: true, message: 'ჩაწერეთ ამანათის ID' }]}
-    >
-      <Input readOnly />
-    </Form.Item>
-    <Form.Item
-      label="Owner ID"
-      name="ownerId"
-      rules={[{ required: true, message: 'ჩაწერეთ მომხარებლის ID' }]}
-    >
-      <Input readOnly />
-    </Form.Item>
-    <Form.Item
-      label="Payment Status"
-      name="payment_status"
-      rules={[{ required: true, message: 'ჩაწერეთ გადახდის სტატუსი' }]}
-    >
-      <Select>
-        <Select.Option value="Unpaid">გადახდილი</Select.Option>
-        <Select.Option value="Paid">გადაუხდელი</Select.Option>
-      </Select>
-    </Form.Item>
-    <Form.Item
-      label="Price"
-      name="price"
-      rules={[{ required: true, message: 'გთხოვთ ჩაწერეთ ფასი' }]}
-    >
-      <Input type="number" />
-    </Form.Item>
-    <Form.Item
-      label="Shipping Status"
-      name="shipping_status"
-      rules={[{ required: true, message: 'Please enter a Shipping Status' }]}
-    >
-      <Input />
-    </Form.Item>
-    <Form.Item
-      label="Weight"
-      name="weight"
-      rules={[{ required: true, message: 'გთხოვთ ჩაწერე წონა' }]}
-    >
-      <Input type="number" />
-    </Form.Item>
-    <Form.Item>
-      <Button type="primary" htmlType="submit" loading={updateMutation.isPending} className="w-full">
-         ამანათის განახელბა
+<div
+  className="
+    p-10 min-h-screen 
+    max_smm:p-0 max_smm:m-0 max_smm:min-h-0 
+    max_smm:absolute
+  "
+>    <div className="mx-auto bg-white mr-50 rounded-lg p-8 max-w-6xl w-full max_smm:mr-30 max_smm:w-[300px]">
+      <div className="flex flex-wrap justify-between items-center mb-6">
+      <Button type="primary" onClick={handleManualOpen} className="w-full md:w-auto mb-4 md:mb-0">
+        + ექსელით შექმნა +
       </Button>
-    </Form.Item>
-  </Form>
-</Modal>
+      <Button type="primary" onClick={handleSingleParcelOpen} className="w-full md:w-auto">
+        + ერთის შექმნა +
+      </Button>
+    </div>
 
-{/* 
- */}
-         <Modal
-          title={selectedParcel ? 'Edit Parcel' : 'Add Parcel Manually'}
-          open={isModalOpen}
-          onCancel={handleCancel}
-          footer={null}
+    <Input.Search
+      placeholder="Search by Tracking ID"
+      onSearch={(value) => setSearchTerm(value)}
+      enterButton
+      className="mb-6"
+      size="large"
+    />
+
+    <Loading loading={createMutation.isPending || isLoadingParcels} />
+
+    <Table
+      columns={columns}
+      dataSource={parcelsData?.parcels || []}
+      loading={isLoadingParcels}
+      pagination={false}
+      rowKey="id"
+      className="mb-6"
+      scroll={{ x: '100%' }}
+    />
+
+    <Pagination
+      current={currentPage}
+      total={parcelsData?.totalCount || 0}
+      pageSize={10}
+      onChange={handlePaginationChange}
+      showSizeChanger={false}
+      showQuickJumper
+      simple
+      className="text-center"
+    />
+
+    <Modal title="Edit Parcel" open={isEditModalOpen} onCancel={handleEditCancel} footer={null}>
+      <Form form={editForm} layout="vertical" onFinish={handleUpdate}>
+        <Form.Item
+          label="Parcel ID"
+          name="id"
+          rules={[{ required: true, message: 'ჩაწერეთ ამანათის ID' }]}
         >
-          <Form form={form} layout="vertical" onFinish={handleUploadFinish}>
-            <Form.Item label="Flight ID" name="flight_id">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Flight From" name="flight_from">
-              <Select>
-                <Select.Option value="china">China</Select.Option>
-                <Select.Option value="Turkey">Turkey</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Arrived At" name="arrived_at">
-              <Input />
-            </Form.Item>
-            <Upload.Dragger
-              name="file"
-              multiple={false}
-              accept=".xlsx, .xls"
-              beforeUpload={(file) => {
-                handleFileUpload(file);
-                return false;
-              }}
-              className="mb-4"
-            >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">დააკლიკეთ ან ჩააგდეთ excel ფაილი აქ</p>
-              <p className="ant-upload-hint"> მხოლოდ .xlsx  ან .xls ფორმატები.</p>
-            </Upload.Dragger>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={createMutation.isPending} className="w-full">
-                Save Parcel
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-{/*  */}
-<Modal
-          title="Edit Parcel"
-          open={isEditModalOpen}
-          onCancel={handleEditCancel}
-          footer={null}
+          <Input readOnly />
+        </Form.Item>
+        <Form.Item
+          label="Owner ID"
+          name="ownerId"
+          rules={[{ required: true, message: 'ჩაწერეთ მომხარებლის ID' }]}
         >
-          <Form form={editForm} layout="vertical" onFinish={handleUpdate}>
-            {/* <Form.Item
-              label="Flight ID"
-              name="flight_id"
-              rules={[{ required: true, message: 'Please enter a Flight ID' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Flight From"
-              name="flight_from"
-              rules={[{ required: true, message: 'Please select a Flight From' }]}
-            >
-              <Select>
-                <Select.Option value="china">China</Select.Option>
-                <Select.Option value="turkey">Turkey</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Arrived At"
-              name="arrived_at"
-              rules={[{ required: true, message: 'Please enter Arrival Information' }]}
-            >
-              <Input />
-            </Form.Item> */}
-            <Form.Item
-              label="Tracking ID"
-              name="id"
-              rules={[{ required: true, message: 'Please enter a Tracking ID' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item label="Weight" name="weight">
-              <Input type="number" />
-            </Form.Item>
-            <Form.Item
-              label="Owner ID"
-              name="ownerId"
-              rules={[{ required: true, message: 'Please enter an Owner ID' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item label="Price" name="price">
-              <Input type="number" />
-            </Form.Item>
-            <Form.Item
-              label="Shipping Status"
-              name="shipping_status"
-              rules={[{ required: true, message: 'Please enter a Shipping Status' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Payment Status"
-              name="payment_status"
-              rules={[{ required: true, message: 'Please enter a Payment Status' }]}
-            >
-              <Select>
-                <Select.Option value="PAID">PAID</Select.Option>
-                <Select.Option value="UNPAID">UNPAID</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={updateMutation.isPending} className="w-full">
-                Update Parcel
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      {/*  */}
-        <Modal
-          title="Add Single Parcel"
-          open={isSingleParcelModalOpen}
-          onCancel={handleSingleParcelCancel}
-          footer={null}
+          <Input readOnly />
+        </Form.Item>
+        <Form.Item
+          label="Payment Status"
+          name="payment_status"
+          rules={[{ required: true, message: 'ჩაწერეთ გადახდის სტატუსი' }]}
         >
-          <Form form={singleParcelForm} layout="vertical" onFinish={handleSingleParcelFinish}>
-            <Form.Item
-              label="Flight ID"
-              name="id"
-              rules={[{ required: true, message: 'Please enter a Flight ID' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Flight From"
-              name="flight_from"
-              rules={[{ required: true, message: 'Please select a Flight From' }]}
-            >
-              <Select>
-                <Select.Option value="china">China</Select.Option>
-                <Select.Option value="turkey">Turkey</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Arrived At"
-              name="arrived_at"
-              rules={[{ required: true, message: 'Please enter Arrival Information' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Tracking ID"
-              name="tracking_id"
-              rules={[{ required: true, message: 'Please enter a Tracking ID' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item label="Weight" name="weight">
-              <Input type="number" />
-            </Form.Item>
-            <Form.Item
-              label="Owner ID"
-              name="ownerId"
-              rules={[{ required: true, message: 'Please enter an Owner ID' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={createMutation.isPending} className="w-full">
-                Save Parcel
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-        {/*  */}
-        <Modal
+          <Select>
+            <Select.Option value="Unpaid">გადაუხდელი</Select.Option>
+            <Select.Option value="Paid">გადახდილი</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label="Price"
+          name="price"
+          rules={[{ required: true, message: 'გთხოვთ ჩაწერეთ ფასი' }]}
+        >
+          <Input type="number" />
+        </Form.Item>
+        <Form.Item
+          label="Shipping Status"
+          name="shipping_status"
+          rules={[{ required: true, message: 'Please enter a Shipping Status' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Weight"
+          name="weight"
+          rules={[{ required: true, message: 'გთხოვთ ჩაწერე წონა' }]}
+        >
+          <Input type="number" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={updateMutation.isPending} className="w-full">
+            ამანათის განახლება
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
+
+    {/* Remaining modals - Adding responsiveness where required */}
+    <Modal
+      title={selectedParcel ? 'Edit Parcel' : 'Add Parcel Manually'}
+      open={isModalOpen}
+      onCancel={handleCancel}
+      footer={null}
+    >
+      <Form form={form} layout="vertical" onFinish={handleUploadFinish}>
+        <Form.Item label="Flight ID" name="flight_id">
+          <Input />
+        </Form.Item>
+        <Form.Item label="Flight From" name="flight_from">
+          <Select>
+            <Select.Option value="china">China</Select.Option>
+            <Select.Option value="Turkey">Turkey</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item label="Arrived At" name="arrived_at">
+          <Input />
+        </Form.Item>
+        <Upload.Dragger
+          name="file"
+          multiple={false}
+          accept=".xlsx, .xls"
+          beforeUpload={(file) => {
+            handleFileUpload(file);
+            return false;
+          }}
+          className="mb-4"
+        >
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">დააკლიკეთ ან ჩააგდეთ excel ფაილი აქ</p>
+          <p className="ant-upload-hint"> მხოლოდ .xlsx ან .xls ფორმატები.</p>
+        </Upload.Dragger>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={createMutation.isPending} className="w-full">
+            Save Parcel
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
+
+    <Modal title="Add Single Parcel" open={isSingleParcelModalOpen} onCancel={handleSingleParcelCancel} footer={null}>
+      <Form form={singleParcelForm} layout="vertical" onFinish={handleSingleParcelFinish}>
+        <Form.Item
+          label="Flight ID"
+          name="id"
+          rules={[{ required: true, message: 'Please enter a Flight ID' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Flight From"
+          name="flight_from"
+          rules={[{ required: true, message: 'Please select a Flight From' }]}
+        >
+          <Select>
+            <Select.Option value="china">China</Select.Option>
+            <Select.Option value="turkey">Turkey</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label="Arrived At"
+          name="arrived_at"
+          rules={[{ required: true, message: 'Please enter Arrival Information' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Tracking ID"
+          name="tracking_id"
+          rules={[{ required: true, message: 'Please enter a Tracking ID' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item label="Weight" name="weight">
+          <Input type="number" />
+        </Form.Item>
+        <Form.Item
+          label="Owner ID"
+          name="ownerId"
+          rules={[{ required: true, message: 'Please enter an Owner ID' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={createMutation.isPending} className="w-full">
+            Save Parcel
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
+
+    <Modal
       title="Delete Declaration"
       open={isDeleteModalOpen}
       onCancel={() => setIsDeleteModalOpen(false)}
-      footer={null} // Custom footer instead of default buttons
+      footer={null}
     >
-      <div style={{ textAlign: "center" }}>
-        {/* Styled Question */}
-        <Text strong style={{ fontSize: "16px" }}>
-         დარწმუნებული ხართ რომ გსურთ ამ  ამანათის წაშლა ?
+      <div className="text-center">
+        <Text strong style={{ fontSize: '16px' }}>
+          დარწმუნებული ხართ რომ გსურთ ამ ამანათის წაშლა?
         </Text>
-        
-        {/* Action Buttons */}
-        <div style={{ marginTop: "20px" }}>
+        <div className="mt-4 flex justify-center">
           <Button
             type="primary"
             danger
@@ -547,69 +466,74 @@ const {Text} = Typography
               handleDeleteMutation(selectedParcelId);
               setIsDeleteModalOpen(false);
             }}
-            style={{ marginRight: "10px" }}
+            className="mr-4"
           >
-            კი,წაშალე
+            კი, წაშალე
           </Button>
           <Button onClick={() => setIsDeleteModalOpen(false)}>გაუქმება</Button>
         </div>
       </div>
     </Modal>
-{/*  */}
-        {/* delecration modal */}
-        <Modal
-          title="Declaration Details"
-          open={isDelecrationModalOpen}
-          onCancel={() => setIsDeclerationModalOpen(false)}
-          footer={null}
-        >
-          {selectedParcel?.declaration ? (
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">ID:</span>
-                <span className="w-2/3">{selectedParcel.declaration.id}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">ტიპი:</span>
-                <span className="w-2/3">{selectedParcel.declaration.type}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">ფასი:</span>
-                <span className="w-2/3">${selectedParcel.declaration.price}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">Website:</span>
-                <a href={selectedParcel.declaration.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 w-2/3">
-                  {selectedParcel.declaration.website}
-                </a>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">კომენტარი:</span>
-                <span className="w-2/3">{selectedParcel.declaration.comment}</span>
-              </div>
-              {selectedParcel.declaration.invoice_Pdf && (
-                <div className="flex justify-center mt-6">
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      const blob = new Blob(
-                        [new Uint8Array(selectedParcel.declaration.invoice_Pdf.data)],
-                        { type: 'application/pdf' }
-                      );
-                      const url = URL.createObjectURL(blob);
-                      window.open(url);
-                    }}
-                  >
-                    ინვოისის ნახვა
-                  </Button>
-                </div>
-              )}
+
+    <Modal
+      title="Declaration Details"
+      open={isDelecrationModalOpen}
+      onCancel={() => setIsDeclerationModalOpen(false)}
+      footer={null}
+    >
+      {selectedParcel?.declaration ? (
+        <div className="space-y-4">
+          <div className="flex items-center">
+            <span className="font-semibold w-1/3">ID:</span>
+            <span className="w-2/3">{selectedParcel.declaration.id}</span>
+          </div>
+          <div className="flex items-center">
+            <span className="font-semibold w-1/3">ტიპი:</span>
+            <span className="w-2/3">{selectedParcel.declaration.type}</span>
+          </div>
+          <div className="flex items-center">
+            <span className="font-semibold w-1/3">ფასი:</span>
+            <span className="w-2/3">${selectedParcel.declaration.price}</span>
+          </div>
+          <div className="flex items-center">
+            <span className="font-semibold w-1/3">Website:</span>
+            <a
+              href={selectedParcel.declaration.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 w-2/3"
+            >
+              {selectedParcel.declaration.website}
+            </a>
+          </div>
+          <div className="flex items-center">
+            <span className="font-semibold w-1/3">კომენტარი:</span>
+            <span className="w-2/3">{selectedParcel.declaration.comment}</span>
+          </div>
+          {selectedParcel.declaration.invoice_Pdf && (
+            <div className="flex justify-center mt-6">
+              <Button
+                type="primary"
+                onClick={() => {
+                  const blob = new Blob(
+                    [new Uint8Array(selectedParcel.declaration.invoice_Pdf.data)],
+                    { type: 'application/pdf' }
+                  );
+                  const url = URL.createObjectURL(blob);
+                  window.open(url);
+                }}
+              >
+                ინვოისის ნახვა
+              </Button>
             </div>
-          ) : (
-            <p className="text-center text-gray-500">დეკლერაცია არ მოიძებნა</p>
           )}
-        </Modal>
-      </div>
-    </div>
+        </div>
+      ) : (
+        <p className="text-center text-gray-500">დეკლერაცია არ მოიძებნა</p>
+      )}
+    </Modal>
+  </div>
+</div>
+
   );
 }

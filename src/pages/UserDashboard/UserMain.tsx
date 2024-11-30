@@ -128,7 +128,7 @@ export default function UserMain() {
       </Sider>
       <Layout className="site-layout md:ml-[200px] ml-[50px] ">
         <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
-          <Modal  title="შეივსე ბალანსი" open={balacneModal} onCancel={onBalanceCLose} footer={null}>
+          <Modal  title="" open={balacneModal} onCancel={onBalanceCLose} footer={null}>
 
             <BalanceModal/>
           </Modal>

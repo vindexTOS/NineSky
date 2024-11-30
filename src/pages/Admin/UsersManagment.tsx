@@ -270,190 +270,193 @@ const {Text} = Typography
   }
 
   return (
-    <div className="p-10 min-h-screen">
-      <div className="mx-auto bg-white rounded-lg p-8">
-        <Input.Search
-          placeholder="Search users"
-          onSearch={setSearchTerm}
-          enterButton
-          className="mb-6"
-          size="large"
-        />
-        <Table
-          columns={columns}
-          dataSource={data?.data.
-            parsedUser
-            || []}
-          loading={isPending}
-          pagination={false}
-          rowKey="id"
-          className="mb-6"
-        />
-        <Pagination
-          current={currentPage}
-          total={data?.data?.totalCount}
-          pageSize={10}
-          onChange={handlePaginationChange}
-          showSizeChanger={false}
-          showQuickJumper
-          simple
-          className="text-center"
-        />
-
-<Modal
-      title="Parcel Details"
-      open={isDetalseModalOpen}
-      onCancel={handleCancelDetalesModal}
-      footer={null}
-      width={800}
-    >
-      {detaledUserInfo ? (
-        <Table
-          dataSource={detaledUserInfo.parcels}
-          rowKey="id"
-          columns={columns2}
-          pagination={false}
-        />
-      ) : (
-        <Loading loading={!detaledUserInfo} />
-      )}
-      <Pagination
-        current={modalCurrentPage}
-        total={detaledUserInfo?.totalCount ? detaledUserInfo?.totalCount : 0}
-        pageSize={10}
-        onChange={handleModalPagination}
+    <div className="   p-10 min-h-screen 
+    max_smm:p-0 max_smm:m-0 max_smm:min-h-0 
+    max_smm:absolute">
+    <div className="mx-auto bg-white mr-50 rounded-lg p-8 max-w-6xl w-full max_smm:mr-30 max_smm:w-[300px]">
+      <Input.Search
+        placeholder="Search users"
+        onSearch={setSearchTerm}
+        enterButton
+        className="mb-6 w-full md:w-auto"
+        size="large"
       />
-    </Modal>
-        <Modal title="Edit User" open={isModalOpen} onCancel={handleCancel} footer={null}>
-          {selectedUser && (
-            <Form form={form} layout="vertical" onFinish={handleFinish}>
-              <Form.Item label="Email" name="email">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Password" name="password">
-                
-                <Input.Password />
-              </Form.Item>
-              <Form.Item label="First Name" name="first_name">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Last Name" name="last_name">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Phone Number" name="phone_number">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Personal Number" name="personal_number">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Office" name="office">
-                <Input />
-              </Form.Item>
-              <Form.Item label="City" name="city">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Address" name="address">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Access Level" name="accessLevel">
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item className="hidden" label="id" name="id">
-                <Input type="text" />
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary" htmlType="submit" loading={mutation.isPending} className="w-full">
-                  შენახვა
-                </Button>
-              </Form.Item>
-            </Form>
-          )}
-        </Modal>
-        {/*  */}
-  {/* delete modal */}
-  <Modal
-      title="Delete Declaration"
-      open={isDeleteModalOpen}
-      onCancel={() => setIsDeleteModalOpen(false)}
-      footer={null} // Custom footer instead of default buttons
-    >
-      <div style={{ textAlign: "center" }}>
-        {/* Styled Question */}
-        <Text strong style={{ fontSize: "16px" }}>
-         დარწმუნებული ხართ რომ გსურთ ამ უსერის წაშლა ?
-        </Text>
-        
-        {/* Action Buttons */}
-        <div style={{ marginTop: "20px" }}>
-          <Button
-            type="primary"
-            danger
-            onClick={() => {
-              handleDeleteMutation(selectedUserId);
-              setIsDeleteModalOpen(false);
-            }}
-            style={{ marginRight: "10px" }}
-          >
-            კი,წაშალე
-          </Button>
-          <Button onClick={() => setIsDeleteModalOpen(false)}>გაუქმება</Button>
+      <Table
+        columns={columns}
+        dataSource={data?.data?.parsedUser || []}
+        loading={isPending}
+        pagination={false}
+        rowKey="id"
+        className="mb-6 overflow-x-auto"
+      />
+      <Pagination
+        current={currentPage}
+        total={data?.data?.totalCount}
+        pageSize={10}
+        onChange={handlePaginationChange}
+        showSizeChanger={false}
+        showQuickJumper
+        simple
+        className="text-center"
+      />
+  
+      <Modal
+        title="Parcel Details"
+        open={isDetalseModalOpen}
+        onCancel={handleCancelDetalesModal}
+        footer={null}
+        width={800}
+      >
+        {detaledUserInfo ? (
+          <Table
+            dataSource={detaledUserInfo.parcels}
+            rowKey="id"
+            columns={columns2}
+            pagination={false}
+            className="overflow-x-auto"
+          />
+        ) : (
+          <Loading loading={!detaledUserInfo} />
+        )}
+        <Pagination
+          current={modalCurrentPage}
+          total={detaledUserInfo?.totalCount || 0}
+          pageSize={10}
+          onChange={handleModalPagination}
+          className="mt-4"
+        />
+      </Modal>
+  
+      <Modal title="Edit User" open={isModalOpen} onCancel={handleCancel} footer={null}>
+        {selectedUser && (
+          <Form form={form} layout="vertical" onFinish={handleFinish} className="space-y-4">
+            <Form.Item label="Email" name="email">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Password" name="password">
+              <Input.Password />
+            </Form.Item>
+            <Form.Item label="First Name" name="first_name">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Last Name" name="last_name">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Phone Number" name="phone_number">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Personal Number" name="personal_number">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Office" name="office">
+              <Input />
+            </Form.Item>
+            <Form.Item label="City" name="city">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Address" name="address">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Access Level" name="accessLevel">
+              <Input type="number" />
+            </Form.Item>
+            <Form.Item className="hidden" label="id" name="id">
+              <Input type="text" />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={mutation.isPending} className="w-full">
+                შენახვა
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
+  
+      <Modal
+        title="Delete Declaration"
+        open={isDeleteModalOpen}
+        onCancel={() => setIsDeleteModalOpen(false)}
+        footer={null}
+      >
+        <div className="text-center">
+          <Text strong style={{ fontSize: '16px' }}>
+            დარცუმებული ხარხთ რომ გსურთ ამ უსერის წაშლა ?
+          </Text>
+          <div className="mt-4 flex justify-center">
+            <Button
+              type="primary"
+              danger
+              onClick={() => {
+                handleDeleteMutation(selectedUserId);
+                setIsDeleteModalOpen(false);
+              }}
+              className="mr-4"
+            >
+              კი,წაშალე
+            </Button>
+            <Button onClick={() => setIsDeleteModalOpen(false)}>გაუაქმება</Button>
+          </div>
         </div>
-      </div>
-    </Modal>
-        {/*  */}
-        <Modal
-          title="Declaration Details"
-          open={isDelecrationModalOpen}
-          onCancel={() => setIsDeclerationModalOpen(false)}
-          footer={null}
-        >
-          {selectedParcel?.declaration ? (
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">ID:</span>
-                <span className="w-2/3">{selectedParcel.declaration.id}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">ტიპი:</span>
-                <span className="w-2/3">{selectedParcel.declaration.type}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">ფასი:</span>
-                <span className="w-2/3">${selectedParcel.declaration.price}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">Website:</span>
-                <a href={selectedParcel.declaration.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 w-2/3">
-                  {selectedParcel.declaration.website}
-                </a>
-              </div>
-              <div className="flex items-center">
-                <span className="font-semibold w-1/3">კომენტარი:</span>
-                <span className="w-2/3">{selectedParcel.declaration.comment}</span>
-              </div>
-              {selectedParcel.declaration.invoice_Pdf && (
-                <div className="flex justify-center mt-6">
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      const blob = new Blob(
-                        [new Uint8Array(selectedParcel.declaration.invoice_Pdf.data)],
-                        { type: 'application/pdf' }
-                      );
-                      const url = URL.createObjectURL(blob);
-                      window.open(url);
-                    }}
-                  >
-                    ინვოისის ნახვა
-                  </Button>
-                </div>
-              )}
+      </Modal>
+  
+      <Modal
+        title="Declaration Details"
+        open={isDelecrationModalOpen}
+        onCancel={() => setIsDeclerationModalOpen(false)}
+        footer={null}
+      >
+        {selectedParcel?.declaration ? (
+          <div className="space-y-4">
+            <div className="flex flex-col md:flex-row items-center">
+              <span className="font-semibold w-full md:w-1/3">ID:</span>
+              <span className="w-full md:w-2/3">{selectedParcel.declaration.id}</span>
             </div>
-          ) : (
-            <p className="text-center text-gray-500">No Declaration Available</p>
-          )}
-        </Modal>
-      </div>
+            <div className="flex flex-col md:flex-row items-center">
+              <span className="font-semibold w-full md:w-1/3">ტიპი:</span>
+              <span className="w-full md:w-2/3">{selectedParcel.declaration.type}</span>
+            </div>
+            <div className="flex flex-col md:flex-row items-center">
+              <span className="font-semibold w-full md:w-1/3">ფასი:</span>
+              <span className="w-full md:w-2/3">${selectedParcel.declaration.price}</span>
+            </div>
+            <div className="flex flex-col md:flex-row items-center">
+              <span className="font-semibold w-full md:w-1/3">Website:</span>
+              <a
+                href={selectedParcel.declaration.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 w-full md:w-2/3"
+              >
+                {selectedParcel.declaration.website}
+              </a>
+            </div>
+            <div className="flex flex-col md:flex-row items-center">
+              <span className="font-semibold w-full md:w-1/3">კომენტარი:</span>
+              <span className="w-full md:w-2/3">{selectedParcel.declaration.comment}</span>
+            </div>
+            {selectedParcel.declaration.invoice_Pdf && (
+              <div className="flex justify-center mt-6">
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    const blob = new Blob(
+                      [new Uint8Array(selectedParcel.declaration.invoice_Pdf.data)],
+                      { type: 'application/pdf' }
+                    );
+                    const url = URL.createObjectURL(blob);
+                    window.open(url);
+                  }}
+                >
+                  ინვოისის ნახვა
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">No Declaration Available</p>
+        )}
+      </Modal>
     </div>
+  </div>
   );
 }

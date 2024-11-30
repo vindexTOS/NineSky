@@ -9,7 +9,7 @@ const { Header, Sider, Content } = Layout;
 
 export default function AdminDashboard() {
   const [collapsed, setCollapsed] = useState(false);
-const cookies = new Cookies
+  const cookies = new Cookies();
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
   };
@@ -17,7 +17,7 @@ const cookies = new Cookies
 
   const [selectedKey, setSelectedKey] = useState("/excel-upload");
   const handleMenuSelect = async ({ key }: { key: string }) => {
-    if (key == 'logout') {
+    if (key === 'logout') {
       // Show SweetAlert2 confirmation
       const result = await Swal.fire({
         title: 'ნამდვილად გსურთ გამოსვლა ?',
@@ -36,56 +36,45 @@ const cookies = new Cookies
       });
 
       if (result.isConfirmed) {
-
-
         cookies.remove("token", { path: '/' });
         setTimeout(() => {
           navigate('/');
-
-        }, 500)
-
-      }else{
-
+        }, 500);
+      } else {
         setSelectedKey('user-managment');
-        return
+        return;
       }
-    
-     
-    
-  }
+    }
+    setSelectedKey(key);
+    navigate(key);
+  };
 
-  setSelectedKey(key);
-  navigate(key);
-};
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={toggleCollapse} theme="dark">
+    <Layout style={{ minHeight: '100vh'   }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={toggleCollapse}
+        theme="dark"
+        width={collapsed ? 80 : 200}
+        breakpoint="md"
+        collapsedWidth={60}
+        className="responsive-sider"
+      >
         <div className="logo" style={{ color: 'white', textAlign: 'center', padding: '16px' }}>
           {collapsed ? 'Logo' : 'Admin Dashboard'}
         </div>
-        <Menu  theme="dark" mode="inline" defaultSelectedKeys={['excel-upload']}   selectedKeys={[selectedKey]}
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={['excel-upload']}
+          selectedKeys={[selectedKey]}
           onSelect={handleMenuSelect}
->
-          {/* <Menu.Item key="1" icon={<HomeOutlined />}>
-            Home
-          </Menu.Item>
-          <Menu.Item key="2" icon={<UserOutlined />}>
-            Users
-          </Menu.Item>*/}
-          <Menu.Item key="user-managment" icon={<UserOutlined />}>
-      მომხმარებლები
-          </Menu.Item> 
-          <Menu.Item key="excel-upload" icon={<FileOutlined />}>
-           ამანათები
-          </Menu.Item>
-          <Menu.Item key="price-managment" icon={<DollarCircleOutlined />}>
-            ფასის
-          </Menu.Item>
-          <Menu.Item key="logout" icon={<LogoutOutlined />}>
-            გამოსვლა
-          </Menu.Item>
-      
-          {/* Add more menu items here */}
+        >
+          <Menu.Item key="user-managment" icon={<UserOutlined />}>მომხმარებლები</Menu.Item>
+          <Menu.Item key="excel-upload" icon={<FileOutlined />}>ამანათები</Menu.Item>
+          <Menu.Item key="price-managment" icon={<DollarCircleOutlined />}>ფასის</Menu.Item>
+          <Menu.Item key="logout" icon={<LogoutOutlined />}>გამოსვლა</Menu.Item>
         </Menu>
       </Sider>
       <Layout>
@@ -97,14 +86,11 @@ const cookies = new Cookies
             style={{ float: 'right' }}
           >
             <Menu.Item key="1" icon={<MenuOutlined />} />
-            {/* Add more items to the top navigation bar here */}
           </Menu>
         </Header>
         <Content style={{ padding: '0 24px', minHeight: 280 }}>
-        
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-    
-            <Outlet/>
+            <Outlet />
           </div>
         </Content>
       </Layout>

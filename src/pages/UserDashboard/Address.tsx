@@ -23,12 +23,9 @@ export default function Address() {
   }, []);
 
   useEffect(() => {
-    // console.log(decodedUser)
-
     if (decodedUser && decodedUser.sub) {
       const fetchData = async () => {
-        const data: any = await GetUserInfo( );
-        // console.log(data)
+        const data: any = await GetUserInfo();
         setUserInfo({ ...decodedUser, ...data?.data });
       };
       fetchData();
@@ -36,11 +33,10 @@ export default function Address() {
   }, [decodedUser]);
 
   useEffect(() => {
-    // console.log(userInfo)
     if (userInfo && userInfo.userDetails.first_name) {
       const addresses = {
         china: {
-          'First Name': userInfo.userDetailsfirst_name,
+          'First Name': userInfo.userDetails.first_name,
           'Last Name': userInfo.userDetails.last_name,
           'Province': 'GuangDong Province / 广东省',
           'City': 'Guangzhou City / 广州',
@@ -69,37 +65,37 @@ export default function Address() {
   };
 
   return (
-    <section className="p-8">
-      <div className="flex justify-center mb-8">
+    <section className="p-4 md:p-8 mt-10">
+      <div className="flex justify-center mb-8 flex-wrap gap-4">
         <button
-          className={`px-10 py-4 mx-4 rounded-lg text-xl transition-all duration-300 transform ${
+          className={`px-6 py-3 rounded-lg text-lg md:text-xl transition-all duration-300 transform ${
             selectedCountry === 'china'
-                 ? 'bg-blue-400 text-white shadow-lg scale-105'
+              ? 'bg-blue-400 text-white shadow-lg scale-105'
               : 'bg-gray-200 hover:bg-gray-300'
           }`}
           onClick={() => handleCountrySwitch('china')}
         >
-        ჩინეთი
+          ჩინეთი
         </button>
         <button
-          className={`px-10 py-4 mx-4 rounded-lg text-xl transition-all duration-300 transform ${
+          className={`px-6 py-3 rounded-lg text-lg md:text-xl transition-all duration-300 transform ${
             selectedCountry === 'turkey'
-                  ? 'bg-blue-400 text-white shadow-lg scale-105'
+              ? 'bg-blue-400 text-white shadow-lg scale-105'
               : 'bg-gray-200 hover:bg-gray-300'
           }`}
           onClick={() => handleCountrySwitch('turkey')}
         >
-         თურქეთი
+          თურქეთი
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto p-8 rounded-lg border border-gray-200 shadow-xl bg-white bg-opacity-80 backdrop-blur-lg transition-all duration-300">
+      <div className="max-w-full md:max-w-4xl mx-auto p-4 md:p-8 rounded-lg border border-gray-200 shadow-xl bg-white bg-opacity-80 backdrop-blur-lg transition-all duration-300">
         {infoData && infoData[selectedCountry] && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {Object.entries(infoData[selectedCountry]).map(([key, value]: any) => (
               <div key={key} className="flex flex-col mb-4 border-b pb-4">
-                <span className="text-lg font-semibold text-gray-700 mb-2">{key}:</span>
-                <span className="text-xl font-medium text-gray-900">{value}</span>
+                <span className="text-base md:text-lg font-semibold text-gray-700 mb-1 md:mb-2">{key}:</span>
+                <span className="text-lg md:text-xl font-medium text-gray-900">{value}</span>
               </div>
             ))}
           </div>

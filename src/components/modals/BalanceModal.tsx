@@ -25,8 +25,8 @@ export default function BalanceModal() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full bg-gray-100 p-4 rounded-lg shadow-lg">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">შეიყვანეთ თანხა</h2>
+    <div className="flex flex-col items-center justify-center  max_smm:w-[300px] max_smm:ml-10  w-full h-full bg-gray-100 p-4 rounded-lg shadow-lg "  style={{zIndex:20000}} >
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">ბალანსის შევსება</h2>
       <Form
         onFinish={onFinish}
         layout="vertical"
