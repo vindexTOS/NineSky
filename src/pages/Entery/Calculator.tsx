@@ -1,24 +1,76 @@
+import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
+import { GetPrice } from '../../API/Price/PriceManagment';
 
 export default function Calculator() {
-  const [selectedCountry, setSelectedCountry] = useState('china');
+  const [selectedCountry, setSelectedCountry] = useState('China');
   const [weight, setWeight] = useState('');
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
   const [girth, setGirth] = useState('');
   const [price, setPrice] = useState<any>(null);
-
-  const handleCalculate = () => {
-    const calculatedPrice = (parseFloat(weight) + parseFloat(width) + parseFloat(height) + parseFloat(girth)) * 0.1;
-    setPrice(calculatedPrice.toFixed(2));
-  };
-
   const [isVisible, setIsVisible] = useState(false);
+  const [prices, setPrices] = useState<any>(null);
+
+  const { data } = useQuery({
+    queryKey: ['parcels-price'],
+    queryFn: () => GetPrice(),
+  });
+
+  useEffect(() => {
+    if (data?.data) {
+      console.log(data.data);
+      setPrices(data.data);
+    }
+  }, [data]);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 500); // Delay to ensure the page has loaded
     return () => clearTimeout(timer);
   }, []);
+
+  const handleCalculate = () => {
+    if (!prices) {
+      alert('Prices not loaded yet, please try again later.');
+      return;
+    }
+  
+    const weightValue = parseFloat(weight);
+    const widthValue = parseFloat(width);
+    const heightValue = parseFloat(height);
+    const girthValue = parseFloat(girth);
+  
+    if (isNaN(weightValue) || isNaN(widthValue) || isNaN(heightValue) || isNaN(girthValue)) {
+      alert('Please enter valid numeric values for all inputs.');
+      return;
+    }
+  
+    // Price per kg for the selected country
+    const countryPricePerKg = parseFloat(prices[selectedCountry]);
+  
+    if (!countryPricePerKg) {
+      alert('Price data for the selected country is not available.');
+      return;
+    }
+  
+    // Calculate the dimensional weight
+    const dimensionalWeight = (widthValue * heightValue * girthValue) / 5000; // Divisor can vary based on the standard
+  
+    // Use the greater value between actual weight and dimensional weight
+    const applicableWeight = Math.max(weightValue, dimensionalWeight);
+  
+    // Base price calculation using the applicable weight and country-specific price per kg
+    let calculatedPrice = applicableWeight * countryPricePerKg;
+  
+    // Add surcharges if the package is oversized
+    const oversizeSurcharge = 10.0; // Arbitrary surcharge value for oversize items
+  
+    if (widthValue > 100 || heightValue > 100 || girthValue > 100) {
+      calculatedPrice += oversizeSurcharge;
+    }
+  
+    setPrice(calculatedPrice.toFixed(2));
+  };
 
   return (
     <div
@@ -39,9 +91,8 @@ export default function Calculator() {
           onChange={(e) => setSelectedCountry(e.target.value)}
           className="block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2fb9ff] rounded-full text-sm shadow-md bg-white text-gray-700"
         >
-          <option value="china" className="text-black">ჩინეთი</option>
-          <option value="china-air" className="text-black">ჩინეთი-საჰაერო</option>
-          <option value="turkey" className="text-black">თურქეთი</option>
+          <option value="China" className="text-black">ჩინეთი</option>
+          <option value="Turkey" className="text-black">თურქეთი</option>
         </select>
       </div>
 
